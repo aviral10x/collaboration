@@ -70,7 +70,7 @@ export function Hero() {
           <button
             id="hero-cta"
             onClick={() => scrollToSection('contact')}
-            className="hero-cta group relative flex items-center gap-3 rounded-full overflow-hidden border border-white/20 px-2 py-2 transition-transform duration-500 hover:scale-[1.04] active:scale-[0.98]"
+            className="hero-cta group relative flex cursor-pointer items-center gap-3 rounded-full overflow-hidden border border-white/20 px-2 py-2 transition-transform duration-500 hover:scale-[1.04] active:scale-[0.98]"
           >
             <span className="hero-cta-glow" aria-hidden="true" />
             <span className="hero-cta-sheen" aria-hidden="true" />
