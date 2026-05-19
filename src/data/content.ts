@@ -169,25 +169,19 @@ export const servicePillars = [
   {
     num: '01',
     title: 'AI Product Commercials',
+    label: 'Launch Engine',
     desc: 'Campaign-ready product films with cinematic lighting, controlled art direction, and quick creative iteration.',
-    deliverables: ['Concept routes', 'AI-generated sequences', 'Compositing', 'Web and social cutdowns'],
+    outcome: 'For brands that need premium product visuals without waiting on a full production calendar.',
+    deliverables: ['Concept routes', 'Hero product shots', 'AI-generated sequences', 'Compositing', 'Web and social cutdowns'],
+    accent: '#89AACC',
   },
   {
     num: '02',
-    title: 'Fashion And Beauty Films',
-    desc: 'Editorial visuals for luxury, cosmetics, skincare, personal care, and designer retail brands.',
-    deliverables: ['Launch reels', 'Vertical 4K assets', 'Mood films', 'Campaign treatments'],
-  },
-  {
-    num: '03',
-    title: 'Automotive And Luxury Concepts',
-    desc: 'Performance-led spots and aspirational product worlds for brands that need atmosphere before a full shoot.',
-    deliverables: ['Concept films', 'Hero shots', 'Pitch visuals', 'Brand worlds'],
-  },
-  {
-    num: '04',
     title: 'Social Content Systems',
+    label: 'Growth Engine',
     desc: 'Repeatable video pipelines for Instagram-first pages, creators, character-led IP, and always-on brand content.',
-    deliverables: ['Short-form batches', 'Visual rules', 'Posting-ready edits', 'Ongoing creative consistency'],
+    outcome: 'For teams that need a repeatable stream of polished short-form assets, not one-off content experiments.',
+    deliverables: ['Short-form batches', 'Visual rules', 'Posting-ready edits', 'Format testing', 'Ongoing creative consistency'],
+    accent: '#D4A03C',
   },
 ];
