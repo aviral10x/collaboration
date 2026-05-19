@@ -31,7 +31,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section id="hero" className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center">
+    <section id="hero" className="relative min-h-screen w-full overflow-hidden">
       {/* Background Video */}
       <div className="absolute inset-0 z-0 bg-[var(--color-bg)]">
         <video
@@ -47,12 +47,12 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6">
-        <h1 className="name-reveal text-6xl md:text-8xl lg:text-9xl font-display italic leading-[0.9] text-[var(--color-text-primary)] mb-6">
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1500px] flex-col items-center justify-center px-6 pb-28 pt-20 text-center md:pb-32 md:pt-24">
+        <h1 className="name-reveal mb-7 font-display text-6xl italic leading-[0.88] text-[var(--color-text-primary)] md:text-8xl lg:text-9xl">
           Neural Studios
         </h1>
         
-        <div className="blur-in text-lg md:text-xl text-[var(--color-text-primary)]/80 mb-6 flex items-center justify-center gap-2 flex-wrap">
+        <div className="blur-in mb-7 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-lg text-[var(--color-text-primary)]/80 md:text-xl">
           We create 
           <div className="inline-flex min-w-[180px] justify-center">
             <span key={roleIndex} className="font-display italic text-[var(--color-text-primary)] animate-[var(--animate-role-fade-in)] inline-block">
@@ -62,11 +62,11 @@ export function Hero() {
           for brands.
         </div>
         
-        <p className="blur-in text-sm md:text-base text-[var(--color-muted)] max-w-md mb-8">
+        <p className="blur-in mb-12 max-w-xl text-sm leading-7 text-[var(--color-muted)] md:text-base">
           AI video films for brands that need premium visuals, fast iteration, and scroll-stopping storytelling.
         </p>
 
-        <div className="blur-in flex items-center mt-2">
+        <div className="blur-in flex items-center">
           <button
             id="hero-cta"
             onClick={() => scrollToSection('contact')}
@@ -90,7 +90,7 @@ export function Hero() {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10">
+      <div className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 md:bottom-12">
         <span className="text-[10px] text-[var(--color-muted)] uppercase tracking-[0.2em]">SCROLL</span>
         <div className="w-px h-10 bg-[var(--color-stroke)] overflow-hidden relative">
           <div className="w-full h-full bg-[var(--color-text-primary)]/50 absolute top-0 left-0 animate-[var(--animate-scroll-down)]" />
