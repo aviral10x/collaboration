@@ -1,20 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import gsap from 'gsap';
 import { useHlsVideo } from '../hooks/useHlsVideo';
 import { useSmoothScroll } from '../hooks/useSmoothScroll';
 
-const roles = ["Fashion Films", "AI Commercials", "Brand Campaigns", "Social Content"];
-
 export function Hero() {
   const { videoRef } = useHlsVideo('https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8');
-  const [roleIndex, setRoleIndex] = useState(0);
   const { scrollToSection } = useSmoothScroll();
 
   useEffect(() => {
-    const roleInterval = setInterval(() => {
-      setRoleIndex((prev) => (prev + 1) % roles.length);
-    }, 2000);
-
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
     
     tl.fromTo(".name-reveal", 
@@ -27,7 +20,6 @@ export function Hero() {
       0.3
     );
 
-    return () => clearInterval(roleInterval);
   }, []);
 
   return (
@@ -48,22 +40,11 @@ export function Hero() {
 
       {/* Content */}
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1500px] flex-col items-center justify-center px-6 pb-28 pt-20 text-center md:pb-32 md:pt-24">
-        <h1 className="name-reveal mb-7 font-display text-6xl italic leading-[0.88] text-[var(--color-text-primary)] md:text-8xl lg:text-9xl">
+        <h1 className="name-reveal mb-10 font-display text-6xl italic leading-[0.88] text-[var(--color-text-primary)] md:mb-12 md:text-8xl lg:text-9xl">
           Neural Studios
         </h1>
-        
-        <div className="blur-in mb-7 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-lg text-[var(--color-text-primary)]/80 md:text-xl">
-          We create 
-          <div className="inline-flex min-w-[180px] justify-center">
-            <span key={roleIndex} className="font-display italic text-[var(--color-text-primary)] animate-[var(--animate-role-fade-in)] inline-block">
-              {roles[roleIndex]}
-            </span>
-          </div>
-          for brands.
-        </div>
-        
         <p className="blur-in mb-12 max-w-xl text-sm leading-7 text-[var(--color-muted)] md:text-base">
-          AI video films for brands that need premium visuals, fast iteration, and scroll-stopping storytelling.
+          Cinematic films with atmosphere, taste, and momentum, crafted to make launches, products, and moments feel unforgettable.
         </p>
 
         <div className="blur-in flex items-center">

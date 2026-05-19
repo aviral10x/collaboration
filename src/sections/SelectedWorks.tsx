@@ -351,7 +351,7 @@ export function SelectedWorks() {
 
           <div className="md:justify-self-end md:max-w-xl">
             <p className="text-base leading-relaxed text-[var(--color-muted)] md:text-lg">
-              Two high-signal pieces: an automotive concept film with speed and scale, and a beauty film built around texture, glow, and product desire.
+              Two signal pieces: one built on speed and scale, one on texture, light, and desire.
             </p>
             <div className="mt-6 flex items-center gap-4 text-xs uppercase tracking-[0.2em] text-[var(--color-muted)]">
               <span>{String(proofProjects.length).padStart(2, '0')} films</span>

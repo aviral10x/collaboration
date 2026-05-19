@@ -49,18 +49,18 @@ export const proofOfWork = [
     previewSrc: '/previews/swiss-beauty.mp4',
     fullSrc: '/videos/swiss-beauty.mp4',
     posterSrc: '/previews/swiss-beauty.jpg',
-    description: 'Beauty/about-film style piece for cosmetics, skincare, and personal-care brands.',
+    description: 'Beauty/about-film style piece for cosmetics, skincare, and personal-care launches.',
     accent: '#F0A7B7',
     size: 'tall',
   },
   {
     id: 'caneza',
     title: 'Caneza',
-    category: 'Brand Video',
+    category: 'Launch Video',
     format: 'Horizontal',
     role: 'Product · Storytelling',
     year: '2026',
-    tag: 'BRAND FILM',
+    tag: 'LAUNCH FILM',
     driveId: '1DV0mqQfHvjdxA6S14lms9817eKqU48vS',
     previewSrc: '/previews/caneza.mp4',
     fullSrc: '/videos/caneza.mp4',
@@ -81,7 +81,7 @@ export const proofOfWork = [
     previewSrc: '/previews/beyond-the-glass.mp4',
     fullSrc: '/videos/beyond-the-glass.mp4',
     posterSrc: '/previews/beyond-the-glass.jpg',
-    description: 'Creative direction, atmosphere, and AI-led visual worldbuilding in an experimental frame.',
+    description: 'Creative direction, atmosphere, and visual worldbuilding in an experimental frame.',
     accent: '#8CA6D9',
     size: 'standard',
   },
@@ -92,12 +92,12 @@ export const proofOfWork = [
     format: '4K concept',
     role: 'Surreal · Object Film',
     year: '2026',
-    tag: 'AI CONCEPT',
+    tag: 'VISUAL CONCEPT',
     driveId: '1U-_khWbcj4-ZJprV5-R3h2xzAF6hpjEW',
     previewSrc: '/previews/melting-clock.mp4',
     fullSrc: '/videos/melting-clock.mp4',
     posterSrc: '/previews/melting-clock.jpg',
-    description: 'AI visual experimentation, art direction, and cinematic object transformation.',
+    description: 'Visual experimentation, art direction, and cinematic object transformation.',
     accent: '#CDA6F7',
     size: 'standard',
   },
@@ -136,47 +136,47 @@ export const proofOfWork = [
 ] as const;
 
 export const services = [
-  'Brand films and launch reels',
-  'AI product commercials',
+  'Launch films and product reels',
+  'Product commercials',
   'Fashion and beauty campaign videos',
   'Automotive concept spots',
   'Short-form social ads',
   'Surreal visual experiments and mood films',
   'Showreels for pitches, decks, and outbound client outreach',
-  'Instagram-first content systems for social pages, creators, and character-led brands',
+  'Instagram-first content systems for social pages, creators, and character-led worlds',
 ];
 
 export const bestFitClients = [
   'Fashion labels and designer marketplaces',
-  'Beauty, skincare, and cosmetics brands',
-  'Automotive and luxury lifestyle brands',
+  'Beauty, skincare, and cosmetics teams',
+  'Automotive and luxury lifestyle teams',
   'Consumer products launching new campaigns',
-  'Agencies that need fast concept films or AI-assisted production',
+  'Agencies that need fast concept films or assisted production',
 ];
 
 export const servicePillars = [
   {
     num: '01',
-    title: 'AI Product Commercials',
+    title: 'Product Commercials',
     desc: 'Campaign-ready product films with cinematic lighting, controlled art direction, and quick creative iteration.',
-    deliverables: ['Concept routes', 'AI-generated sequences', 'Compositing', 'Web and social cutdowns'],
+    deliverables: ['Concept routes', 'Cinematic sequences', 'Compositing', 'Web and social cutdowns'],
   },
   {
     num: '02',
     title: 'Fashion And Beauty Films',
-    desc: 'Editorial visuals for luxury, cosmetics, skincare, personal care, and designer retail brands.',
+    desc: 'Editorial visuals for luxury, cosmetics, skincare, personal care, and designer retail launches.',
     deliverables: ['Launch reels', 'Vertical 4K assets', 'Mood films', 'Campaign treatments'],
   },
   {
     num: '03',
     title: 'Automotive And Luxury Concepts',
-    desc: 'Performance-led spots and aspirational product worlds for brands that need atmosphere before a full shoot.',
-    deliverables: ['Concept films', 'Hero shots', 'Pitch visuals', 'Brand worlds'],
+    desc: 'Performance-led spots and aspirational product worlds for teams that need atmosphere before a full shoot.',
+    deliverables: ['Concept films', 'Hero shots', 'Pitch visuals', 'Product worlds'],
   },
   {
     num: '04',
     title: 'Social Content Systems',
-    desc: 'Repeatable video pipelines for Instagram-first pages, creators, character-led IP, and always-on brand content.',
+    desc: 'Repeatable video pipelines for Instagram-first pages, creators, character-led IP, and always-on cultural output.',
     deliverables: ['Short-form batches', 'Visual rules', 'Posting-ready edits', 'Ongoing creative consistency'],
   },
 ];
@@ -227,7 +227,7 @@ export const auraReport = {
 } as const;
 
 export const auraHighlights = [
-  'Complete short-form video content pipeline for an Instagram-native brand',
+  'Complete short-form video content pipeline for an Instagram-native world',
   '15,255 new followers and 112,945,046 views during the 90-day reporting period',
   'Average post performance of 279,116.5 reach, 9,276.5 likes, and 3.5% engagement',
   'Audience clustered around ages 25-44, with strongest concentration in Brazil, Turkey, Japan, India, and Argentina',
@@ -236,17 +236,17 @@ export const auraHighlights = [
 export const contactEmail = 'aviral10x@gmail.com';
 
 export const enquiryGroups = [
-  'Fashion, beauty, skincare, and cosmetics brands planning launch films or campaign assets',
+  'Fashion, beauty, skincare, and cosmetics teams planning launch films or campaign assets',
   'Automotive, luxury, lifestyle, and consumer-product teams building concept spots or product worlds',
-  'Agencies, founders, and marketing teams that need fast AI video routes for pitches, ads, or social rollouts',
+  'Agencies, founders, and marketing teams that need fast video routes for pitches, ads, or social rollouts',
   'Creators and Instagram-first pages looking for repeatable short-form video systems',
 ];
 
 export const outreachCopy = `Hi [Name],
 
-We are Neural Studios, an AI-first video agency creating cinematic ads, fashion films, product launches, and concept reels for brands that want premium visuals without traditional production timelines.
+We are Neural Studios, a cinematic studio creating films, launch worlds, and concept reels with taste, speed, and atmosphere.
 
-If your team is exploring campaign films, AI product commercials, or high-performing social video, we would love to share a few ideas tailored to your brand.
+If your team is exploring campaign films, product commercials, or high-performing social video, we would love to share a few ideas shaped around your world.
 
 Best,
 Neural Studios`;

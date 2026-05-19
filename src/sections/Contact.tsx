@@ -39,8 +39,8 @@ const questions: Array<{
   options?: string[];
 }> = [
   { key: 'name', label: "What's your name? *", placeholder: 'Your name', required: true },
-  { key: 'email', label: "What's your email? *", placeholder: 'you@brand.com', required: true, type: 'email' },
-  { key: 'company', label: "What's your company or brand?", placeholder: 'Brand, agency, or creator name' },
+  { key: 'email', label: "What's your email? *", placeholder: 'you@studio.com', required: true, type: 'email' },
+  { key: 'company', label: "What's your team or project?", placeholder: 'Studio, team, or project name' },
   {
     key: 'projectType',
     label: 'What do you need made?',
@@ -60,8 +60,8 @@ const questions: Array<{
     type: 'choices',
     options: ['$1k-$3k', '$3k-$7k', '$7k-$15k', '$15k+'],
   },
-  { key: 'references', label: 'Any references we should see?', placeholder: 'Links, brands, moods, videos, or visual direction', type: 'textarea' },
-  { key: 'details', label: 'Anything else we should know?', placeholder: 'Tell us the useful context.', type: 'textarea' },
+  { key: 'references', label: 'Any references we should see?', placeholder: 'Links, moods, videos, or visual direction', type: 'textarea' },
+  { key: 'details', label: 'Anything else we should know?', placeholder: 'Give us the spark, the constraints, and the feeling.', type: 'textarea' },
 ];
 
 function InstagramIcon() {

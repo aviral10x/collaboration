@@ -1,1 +1,1 @@
-# Neural Studios - AI Video Agency Portfolio
+# Neural Studios - Cinematic Video Studio Portfolio

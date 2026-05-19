@@ -30,8 +30,8 @@ export function Journal() {
 
           <div className="md:justify-self-end md:max-w-xl">
             <p className="text-[var(--color-muted)] text-base md:text-lg leading-relaxed">
-              Two focused production systems: one for premium product campaigns, one for always-on social output.
-              Both move from idea to polished video assets with AI-first speed and cinematic direction.
+              Two focused production systems: one for premium product stories, one for always-on social output.
+              Both move from idea to polished motion with speed, taste, and cinematic direction.
             </p>
           </div>
         </motion.div>
