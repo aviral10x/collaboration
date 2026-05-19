@@ -104,6 +104,8 @@ const exploreLinks = [
   { label: 'Contact', target: 'contact' },
 ];
 
+const marqueeItems = Array.from({ length: 6 });
+
 export function Contact() {
   const { videoRef } = useHlsVideo('https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8');
   const marqueeRef = useRef<HTMLDivElement>(null);
@@ -228,12 +230,19 @@ export function Contact() {
       </div>
 
       <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-[1440px] flex-col justify-between">
-        <div className="w-full overflow-hidden whitespace-nowrap pb-6">
-          <div ref={marqueeRef} className="inline-block">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <span key={i} className="mx-4 font-display text-6xl text-[var(--color-text-primary)]/12 md:text-8xl lg:text-9xl">
-                NEURAL STUDIOS *
-              </span>
+        <div className="contact-marquee relative left-1/2 w-screen -translate-x-1/2 overflow-hidden whitespace-nowrap pb-6">
+          <div ref={marqueeRef} className="contact-marquee-track flex w-max">
+            {[0, 1].map((group) => (
+              <div key={group} className="flex shrink-0">
+                {marqueeItems.map((_, i) => (
+                  <span
+                    key={`${group}-${i}`}
+                    className="mr-10 font-display text-[clamp(5rem,11vw,10rem)] leading-none text-[var(--color-text-primary)]/12"
+                  >
+                    NEURAL STUDIOS *
+                  </span>
+                ))}
+              </div>
             ))}
           </div>
         </div>
