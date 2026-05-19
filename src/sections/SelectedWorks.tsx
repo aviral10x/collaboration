@@ -326,7 +326,7 @@ export function SelectedWorks() {
     .filter((project): project is CardProject => Boolean(project));
 
   return (
-    <section id="work" className="relative overflow-hidden bg-[var(--color-bg)] py-20 md:py-32">
+    <section id="work" className="relative overflow-hidden bg-[var(--color-bg)] pb-20 pt-10 md:pb-32 md:pt-16">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-16">
         {/* Header */}
