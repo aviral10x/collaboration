@@ -158,31 +158,20 @@ function VideoModal({ project, onClose }: { project: ModalProject; onClose: () =
 }
 
 /* ─────────────────────────────────────────────────────────────
- * HoverVideoCard shows local poster, plays local MP4 preview on hover,
+ * FeatureWorkCard shows local poster, plays local MP4 preview on hover,
  * click-to-expand into modal.
  * ───────────────────────────────────────────────────────────── */
-interface CardProject {
-  id: string;
-  title: string;
-  category: string;
-  year: string;
-  description: string;
-  image: string;
-  previewVideo: string;
-  video: string;
-  accent: string;
-  muxPlaybackId: string | null;
-}
+type CardProject = (typeof projects)[number];
 
-function HoverVideoCard({
+function FeatureWorkCard({
   project,
   index,
-  wide = false,
+  featured = false,
   onOpen,
 }: {
   project: CardProject;
   index: number;
-  wide?: boolean;
+  featured?: boolean;
   onOpen: (p: CardProject) => void;
 }) {
   const { videoRef, isPlaying, play, pause } = useLocalVideoPlayer();
@@ -200,15 +189,16 @@ function HoverVideoCard({
 
   return (
     <motion.div
-      className={`relative overflow-hidden cursor-pointer border border-[var(--color-stroke)] bg-black ${wide ? 'min-h-[480px] md:min-h-[540px]' : 'min-h-[400px] md:min-h-[460px]'}`}
+      className={`group relative cursor-pointer overflow-hidden rounded-lg border border-white/10 bg-black ${
+        featured ? 'min-h-[520px] md:min-h-[680px]' : 'min-h-[500px] md:min-h-[620px]'
+      }`}
       style={{
-        borderRadius: '1.25rem',
         boxShadow: isPlaying
-          ? `0 0 60px ${project.accent}18, 0 20px 60px rgba(0,0,0,0.6)`
-          : '0 8px 40px rgba(0,0,0,0.4)',
+          ? `0 0 90px ${project.accent}26, 0 28px 90px rgba(0,0,0,0.72)`
+          : '0 18px 70px rgba(0,0,0,0.52)',
         transition: 'box-shadow 0.6s ease',
       }}
-      whileHover={{ scale: wide ? 1.012 : 1.02 }}
+      whileHover={{ scale: 1.012 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       onClick={() => onOpen(project)}
       onMouseEnter={handleEnter}
@@ -223,8 +213,8 @@ function HoverVideoCard({
         className="absolute inset-0 w-full h-full object-cover"
         style={{
           transition: 'transform 0.8s cubic-bezier(0.25,1,0.5,1), opacity 0.8s ease',
-          transform: isPlaying ? 'scale(1.03)' : 'scale(1)',
-          opacity: isPlaying ? 0 : 1,
+          transform: isPlaying ? 'scale(1.04)' : 'scale(1)',
+          opacity: isPlaying ? 0.1 : 1,
         }}
         loading="lazy"
       />
@@ -241,7 +231,7 @@ function HoverVideoCard({
         className="absolute inset-0 w-full h-full object-cover"
         style={{
           transition: 'transform 0.8s cubic-bezier(0.25,1,0.5,1), opacity 0.6s ease',
-          transform: isPlaying ? 'scale(1.03)' : 'scale(1)',
+          transform: isPlaying ? 'scale(1.04)' : 'scale(1)',
           opacity: isPlaying ? 1 : 0,
         }}
       />
@@ -250,40 +240,36 @@ function HoverVideoCard({
       <div
         className="absolute inset-0 pointer-events-none z-[1]"
         style={{
-          background: 'linear-gradient(to top, rgba(8,8,10,0.45) 0%, rgba(8,8,10,0.06) 34%, transparent 56%)',
-          opacity: isPlaying ? 0 : 0.9,
+          background: 'linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.26) 46%, rgba(0,0,0,0.04) 100%)',
+          opacity: isPlaying ? 0.18 : 1,
           transition: 'opacity 0.6s ease',
         }}
       />
 
-      {/* Category tag top left */}
-      <div
-        className="absolute top-5 left-5 z-[2]"
-        style={{ opacity: isPlaying ? 0 : 0.9, transition: 'opacity 0.4s ease' }}
-      >
-        <span
-          className="text-[10px] md:text-xs uppercase tracking-[0.2em] font-medium px-3 py-1.5 rounded-full border backdrop-blur-sm"
-          style={{ color: project.accent, borderColor: `${project.accent}50`, background: 'rgba(0,0,0,0.3)' }}
-        >
-          {project.category}
+      <div className="absolute inset-x-0 top-0 z-[2] flex items-start justify-between p-5 md:p-7">
+        <div>
+          <span className="mb-3 block text-[10px] uppercase tracking-[0.28em] text-white/50 md:text-xs">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <span
+            className="text-[10px] font-medium uppercase tracking-[0.22em] md:text-xs"
+            style={{ color: project.accent }}
+          >
+            {project.category}
+          </span>
+        </div>
+        <span className="rounded-full border border-white/15 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/60 backdrop-blur-md">
+          Play film
         </span>
       </div>
-
-      {/* Index top right */}
-      <span
-        className="absolute top-5 right-5 text-[10px] tracking-[0.15em] tabular-nums text-white/30 z-[2]"
-        style={{ opacity: isPlaying ? 0 : 1, transition: 'opacity 0.4s ease' }}
-      >
-        {String(index + 1).padStart(2, '0')}
-      </span>
 
       {/* Play indicator center */}
       <div
         className="absolute inset-0 flex items-center justify-center z-[2] pointer-events-none"
-        style={{ opacity: isPlaying ? 0 : 0.2, transition: 'opacity 0.4s ease' }}
+        style={{ opacity: isPlaying ? 0 : 0.28, transition: 'opacity 0.4s ease' }}
       >
         <div
-          className="w-16 h-16 rounded-full border-2 flex items-center justify-center"
+          className="flex h-20 w-20 items-center justify-center rounded-full border-2 backdrop-blur-sm"
           style={{ borderColor: project.accent }}
         >
           <span
@@ -299,8 +285,8 @@ function HoverVideoCard({
 
       {/* "Click to expand" visible during playback */}
       <motion.div
-        className="absolute top-5 left-1/2 -translate-x-1/2 z-[2] text-[10px] uppercase tracking-[0.2em] tabular-nums"
-        animate={{ opacity: isPlaying ? 0.6 : 0 }}
+        className="absolute left-1/2 top-1/2 z-[2] -translate-x-1/2 translate-y-14 text-[10px] uppercase tracking-[0.24em]"
+        animate={{ opacity: isPlaying ? 0.68 : 0 }}
         transition={{ duration: 0.3 }}
         style={{ color: project.accent }}
       >
@@ -309,56 +295,39 @@ function HoverVideoCard({
 
       {/* Bottom info title, role, year */}
       <div
-        className="absolute bottom-0 left-0 right-0 p-5 md:p-6 flex items-end justify-between z-[2]"
-        style={{ opacity: isPlaying ? 0 : 1, transition: 'opacity 0.4s ease' }}
+        className="absolute bottom-0 left-0 right-0 z-[2] p-5 md:p-7"
+        style={{ opacity: isPlaying ? 0.92 : 1, transition: 'opacity 0.4s ease' }}
       >
-        <div>
-          <h3 className="text-2xl md:text-3xl lg:text-4xl text-white font-display italic leading-tight">
-            {project.title}
-          </h3>
-          <p className="text-white/50 text-xs md:text-sm mt-1 max-w-md leading-relaxed">
-            {project.description.length > 90 ? project.description.slice(0, 90) + '...' : project.description}
-          </p>
+        <div className="mb-5 h-px w-full bg-gradient-to-r from-white/40 via-white/10 to-transparent" />
+        <div className="flex items-end justify-between gap-5">
+          <div>
+            <h3 className="text-4xl leading-none text-white md:text-6xl">
+              {project.title}
+            </h3>
+            <p className="mt-3 max-w-xl text-xs leading-relaxed text-white/58 md:text-sm">
+              {project.description.length > 120 ? project.description.slice(0, 120) + '...' : project.description}
+            </p>
+          </div>
+          <span className="shrink-0 text-xs tabular-nums" style={{ color: project.accent }}>
+            {project.year}
+          </span>
         </div>
-        <span className="text-xs tabular-nums shrink-0 ml-4" style={{ color: project.accent }}>
-          {project.year}
-        </span>
       </div>
     </motion.div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
- * SelectedWorks anthology layout:
- * Full-width → 2-col → Full-width → 2-col → Full-width
- * Exactly like the original, but cleaner with Mux CDN.
- * ───────────────────────────────────────────────────────────── */
+const proofWorkIds = ['ferrari-concept', 'swiss-beauty'];
+
 export function SelectedWorks() {
   const [activeProject, setActiveProject] = useState<CardProject | null>(null);
-
-  // Anthology pattern: wide, [pair], wide, [pair], wide, [pair], wide, final
-  const rows: { type: 'wide' | 'pair'; items: typeof projects } [] = [];
-  let idx = 0;
-
-  while (idx < projects.length) {
-    if (idx === 0 || rows.length % 2 === 0) {
-      // Wide row
-      rows.push({ type: 'wide', items: [projects[idx]] });
-      idx++;
-    } else {
-      // Pair row but if only 1 item left, make it wide instead
-      const pair = projects.slice(idx, idx + 2);
-      if (pair.length === 1) {
-        rows.push({ type: 'wide', items: pair });
-      } else {
-        rows.push({ type: 'pair', items: pair });
-      }
-      idx += pair.length;
-    }
-  }
+  const proofProjects = proofWorkIds
+    .map((id) => projects.find((project) => project.id === id))
+    .filter((project): project is CardProject => Boolean(project));
 
   return (
-    <section id="work" className="bg-[var(--color-bg)] py-20 md:py-32">
+    <section id="work" className="relative overflow-hidden bg-[var(--color-bg)] py-20 md:py-32">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
       <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-16">
         {/* Header */}
         <motion.div
@@ -366,71 +335,50 @@ export function SelectedWorks() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
-          className="mb-14 md:mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6"
+          className="mb-12 md:mb-16 grid gap-8 md:grid-cols-[1.05fr_0.95fr] md:items-end"
         >
           <div>
             <div className="flex items-center gap-3 mb-5">
               <div className="w-8 h-px bg-[var(--color-stroke)]" />
               <span className="text-xs text-[var(--color-muted)] uppercase tracking-[0.3em]">
-                Client-Facing Library
+                Selected Films
               </span>
             </div>
-            <h2 className="text-5xl md:text-6xl lg:text-7xl text-[var(--color-text-primary)] mb-5 tracking-tight">
+            <h2 className="text-5xl md:text-7xl lg:text-8xl text-[var(--color-text-primary)] mb-5">
               Proof of <span className="font-display italic">Work</span>
             </h2>
-            <p className="text-[var(--color-muted)] text-base md:text-lg max-w-md leading-relaxed">
-              Campaign films, product commercials, and visual experiments hover to preview, click to watch.
-            </p>
           </div>
 
-          <span className="text-sm text-[var(--color-muted)] hidden md:block tabular-nums font-medium">
-            {String(projects.length).padStart(2, '0')} Films
-          </span>
+          <div className="md:justify-self-end md:max-w-xl">
+            <p className="text-base leading-relaxed text-[var(--color-muted)] md:text-lg">
+              Two high-signal pieces: an automotive concept film with speed and scale, and a beauty film built around texture, glow, and product desire.
+            </p>
+            <div className="mt-6 flex items-center gap-4 text-xs uppercase tracking-[0.2em] text-[var(--color-muted)]">
+              <span>{String(proofProjects.length).padStart(2, '0')} films</span>
+              <span className="h-px w-10 bg-white/15" />
+              <span>Hover preview</span>
+            </div>
+          </div>
         </motion.div>
 
-        {/* Anthology Stack */}
-        <div className="flex flex-col gap-5 md:gap-6">
-          {rows.map((row, rowIdx) => {
-            if (row.type === 'wide') {
-              const project = row.items[0];
-              return (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-                >
-                  <HoverVideoCard
-                    project={project}
-                    index={projects.indexOf(project)}
-                    wide
-                    onOpen={setActiveProject}
-                  />
-                </motion.div>
-              );
-            }
-
-            return (
-              <div key={`pair-${rowIdx}`} className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
-                {row.items.map((project) => (
-                  <motion.div
-                    key={project.id}
-                    initial={{ opacity: 0, y: 24 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-60px" }}
-                    transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-                  >
-                    <HoverVideoCard
-                      project={project}
-                      index={projects.indexOf(project)}
-                      onOpen={setActiveProject}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            );
-          })}
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.15fr_0.85fr] lg:items-stretch lg:gap-6">
+          {proofProjects.map((project, index) => (
+            <motion.div
+              key={project.id}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.7, delay: index * 0.08, ease: [0.25, 0.1, 0.25, 1] }}
+              className={index === 1 ? 'lg:pt-20' : ''}
+            >
+              <FeatureWorkCard
+                project={project}
+                index={index}
+                featured={index === 0}
+                onOpen={setActiveProject}
+              />
+            </motion.div>
+          ))}
         </div>
       </div>
 
