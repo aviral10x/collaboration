@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { useHlsVideo } from '../hooks/useHlsVideo';
-import { Navbar } from './Navbar';
 import { useSmoothScroll } from '../hooks/useSmoothScroll';
 
 const roles = ["Fashion Films", "AI Commercials", "Brand Campaigns", "Social Content"];
@@ -47,12 +46,10 @@ export function Hero() {
         <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[var(--color-bg)] to-transparent" />
       </div>
 
-      <Navbar />
-
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6 mt-20">
-        <h1 className="name-reveal text-6xl md:text-8xl lg:text-9xl font-display italic leading-[0.9] tracking-tight text-[var(--color-text-primary)] mb-6">
-          InkFrame Films
+      <div className="relative z-10 flex flex-col items-center text-center px-6">
+        <h1 className="name-reveal text-6xl md:text-8xl lg:text-9xl font-display italic leading-[0.9] text-[var(--color-text-primary)] mb-6">
+          Neural Studios
         </h1>
         
         <div className="blur-in text-lg md:text-xl text-[var(--color-text-primary)]/80 mb-6 flex items-center justify-center gap-2 flex-wrap">
@@ -73,22 +70,17 @@ export function Hero() {
           <button
             id="hero-cta"
             onClick={() => scrollToSection('contact')}
-            className="group relative flex items-center gap-0 rounded-full overflow-hidden border border-[var(--color-stroke)] hover:border-white/20 transition-all duration-500 bg-[var(--color-surface)]/60 backdrop-blur-md hover:bg-[var(--color-surface)] shadow-lg shadow-black/20"
+            className="hero-cta group relative flex items-center gap-3 rounded-full overflow-hidden border border-white/20 px-2 py-2 transition-transform duration-500 hover:scale-[1.04] active:scale-[0.98]"
           >
-            {/* Accent gradient glow on hover */}
-            <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              style={{ boxShadow: 'inset 0 0 0 1px rgba(137,170,204,0.3)' }} />
-
-            {/* Label */}
-            <span className="relative text-sm font-medium text-[var(--color-text-primary)]/80 group-hover:text-[var(--color-text-primary)] transition-colors duration-300 pl-6 pr-4 py-3.5 tracking-wide">
+            <span className="hero-cta-glow" aria-hidden="true" />
+            <span className="hero-cta-sheen" aria-hidden="true" />
+            <span className="relative text-sm md:text-base font-semibold text-[var(--color-text-primary)] pl-6 pr-2 py-3.5">
               Get in touch
             </span>
-
-            {/* Arrow circle */}
-            <span className="relative flex items-center justify-center w-10 h-10 mr-1 rounded-full bg-[var(--color-text-primary)]/10 group-hover:bg-[var(--color-text-primary)] transition-all duration-400">
+            <span className="relative flex items-center justify-center w-11 h-11 rounded-full bg-[var(--color-text-primary)] text-[var(--color-bg)] transition-transform duration-500 group-hover:translate-x-1 group-hover:rotate-45">
               <svg
                 width="14" height="14" viewBox="0 0 14 14" fill="none"
-                className="text-[var(--color-text-primary)] group-hover:text-[var(--color-bg)] group-hover:rotate-45 transition-all duration-400"
+                className="text-current"
               >
                 <path d="M2 12L12 2M12 2H4.5M12 2V9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>

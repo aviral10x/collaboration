@@ -1,1 +1,1 @@
-# InkFrame Films - AI Video Agency Portfolio
+# Neural Studios - AI Video Agency Portfolio

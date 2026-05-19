@@ -46,7 +46,7 @@ export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="text-xs text-[var(--color-muted)] uppercase tracking-[0.3em]"
       >
-        InkFrame Films
+        Neural Studios
       </motion.div>
 
       {/* Center Rotating Words */}

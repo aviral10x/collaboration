@@ -14,6 +14,8 @@
   --animate-scroll-down: scroll-down 1.5s ease-in-out infinite;
   --animate-role-fade-in: role-fade-in 0.4s ease-out;
   --animate-gradient-shift: gradient-shift 6s ease infinite;
+  --animate-cta-orbit: cta-orbit 5s linear infinite;
+  --animate-cta-float: cta-float 2.8s ease-in-out infinite;
   
   @keyframes scroll-down {
     0% { transform: translateY(-100%); }
@@ -35,6 +37,16 @@
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
+  }
+
+  @keyframes cta-orbit {
+    0% { transform: translateX(-120%) skewX(-18deg); }
+    100% { transform: translateX(220%) skewX(-18deg); }
+  }
+
+  @keyframes cta-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
   }
 }
 
@@ -61,6 +73,30 @@ body {
 .accent-gradient {
   background: linear-gradient(90deg, #89AACC 0%, #4E85BF 100%);
   background-size: 200% 200%;
+}
+
+.hero-cta {
+  animation: var(--animate-cta-float);
+  background:
+    radial-gradient(circle at 25% 20%, rgba(255,255,255,0.28), transparent 30%),
+    linear-gradient(135deg, rgba(137,170,204,0.95), rgba(255,255,255,0.12) 45%, rgba(78,133,191,0.9));
+  box-shadow: 0 24px 80px rgba(78, 133, 191, 0.28), 0 0 0 1px rgba(255,255,255,0.12) inset;
+}
+
+.hero-cta-glow {
+  position: absolute;
+  inset: -1px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.2), rgba(137,170,204,0.9), rgba(255,255,255,0.2));
+  opacity: 0.45;
+}
+
+.hero-cta-sheen {
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  animation: var(--animate-cta-orbit);
 }
 
 ::-webkit-scrollbar {

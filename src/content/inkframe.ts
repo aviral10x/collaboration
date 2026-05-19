@@ -17,7 +17,7 @@ export const proofOfWork = [
     previewSrc: '/previews/showreel.mp4',
     fullSrc: '/videos/showreel.mp4',
     posterSrc: '/previews/showreel.jpg',
-    description: 'A compact overview reel for introducing InkFrame Films in outbound messages and pitch calls.',
+    description: 'A compact overview reel for introducing Neural Studios in outbound messages and pitch calls.',
     accent: '#D4A03C',
     size: 'wide',
   },
@@ -244,9 +244,9 @@ export const enquiryGroups = [
 
 export const outreachCopy = `Hi [Name],
 
-We are InkFrame Films, an AI-first video agency creating cinematic ads, fashion films, product launches, and concept reels for brands that want premium visuals without traditional production timelines.
+We are Neural Studios, an AI-first video agency creating cinematic ads, fashion films, product launches, and concept reels for brands that want premium visuals without traditional production timelines.
 
 If your team is exploring campaign films, AI product commercials, or high-performing social video, we would love to share a few ideas tailored to your brand.
 
 Best,
-InkFrame Films`;
+Neural Studios`;
