@@ -75,6 +75,26 @@ body {
   background-size: 200% 200%;
 }
 
+.loading-brand {
+  display: inline-block;
+  transform-origin: center;
+  animation: loading-breathe 2.4s ease-in-out infinite;
+  will-change: transform, opacity, text-shadow;
+}
+
+@keyframes loading-breathe {
+  0%, 100% {
+    opacity: 0.86;
+    transform: scale(1);
+    text-shadow: 0 0 18px rgba(255, 255, 255, 0.06);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.026);
+    text-shadow: 0 0 34px rgba(255, 255, 255, 0.16);
+  }
+}
+
 .hero-cta {
   animation: var(--animate-cta-float);
   background:

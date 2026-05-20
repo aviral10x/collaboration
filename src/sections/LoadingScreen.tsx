@@ -63,7 +63,7 @@ export function LoadingScreen({
           transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
           className="font-display text-6xl italic leading-[0.88] text-[var(--color-text-primary)] md:text-8xl lg:text-9xl"
         >
-          Neural Studios
+          <span className="loading-brand">Neural Studios</span>
         </motion.h1>
       </div>
 
