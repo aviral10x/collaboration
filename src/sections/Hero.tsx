@@ -1,26 +1,44 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import gsap from 'gsap';
 import { useHlsVideo } from '../hooks/useHlsVideo';
 import { useSmoothScroll } from '../hooks/useSmoothScroll';
 
-export function Hero() {
-  const { videoRef } = useHlsVideo('https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8');
+export function Hero({
+  playIntro = true,
+  onReady,
+}: {
+  playIntro?: boolean;
+  onReady?: () => void;
+}) {
+  const { videoRef, isReady } = useHlsVideo('https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8');
   const { scrollToSection } = useSmoothScroll();
 
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-    
-    tl.fromTo(".name-reveal", 
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 1.2, delay: 0.1 }
-    )
-    .fromTo(".blur-in",
-      { opacity: 0, filter: "blur(10px)", y: 20 },
-      { opacity: 1, filter: "blur(0px)", y: 0, duration: 1, stagger: 0.1 },
-      0.3
-    );
+    if (isReady) onReady?.();
+  }, [isReady, onReady]);
 
-  }, []);
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.set(".name-reveal", { opacity: 0, y: 50 });
+      gsap.set(".blur-in", { opacity: 0, filter: "blur(10px)", y: 20 });
+
+      if (!playIntro) return;
+
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      
+      tl.fromTo(".name-reveal", 
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 1.2, delay: 0.1 }
+      )
+      .fromTo(".blur-in",
+        { opacity: 0, filter: "blur(10px)", y: 20 },
+        { opacity: 1, filter: "blur(0px)", y: 0, duration: 1, stagger: 0.1 },
+        0.3
+      );
+    }, '#hero');
+
+    return () => ctx.revert();
+  }, [playIntro]);
 
   return (
     <section id="hero" className="relative min-h-screen w-full overflow-hidden">

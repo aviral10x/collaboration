@@ -1,44 +1,72 @@
 import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
+const LOADING_WORDS = ['Frame', 'Motion', 'Story'];
+
+export function LoadingScreen({
+  ready = false,
+  onComplete,
+}: {
+  ready?: boolean;
+  onComplete: () => void;
+}) {
   const [count, setCount] = useState(0);
   const [wordIndex, setWordIndex] = useState(0);
-  const words = ["Direct", "Generate", "Deliver"];
+  const [finished, setFinished] = useState(false);
   const frameRef = useRef<number>(0);
   const startTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const duration = 2700;
-    
     const updateCounter = (timestamp: number) => {
       if (!startTimeRef.current) startTimeRef.current = timestamp;
-      const progress = timestamp - startTimeRef.current;
-      
-      if (progress < duration) {
-        const percentage = Math.min(Math.floor((progress / duration) * 100), 100);
-        setCount(percentage);
-        frameRef.current = requestAnimationFrame(updateCounter);
-      } else {
+      const elapsed = timestamp - startTimeRef.current;
+      const minDuration = 900;
+      const maxDuration = 1800;
+      const shouldFinish = elapsed >= maxDuration || (ready && elapsed >= minDuration);
+
+      if (shouldFinish) {
         setCount(100);
-        setTimeout(onComplete, 400);
+        setFinished(true);
+        return;
       }
+
+      const progress = Math.min(elapsed / maxDuration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      const softCap = ready ? 96 : 84;
+      setCount(Math.min(Math.floor(easedProgress * softCap), softCap));
+      frameRef.current = requestAnimationFrame(updateCounter);
     };
 
     frameRef.current = requestAnimationFrame(updateCounter);
 
-    const wordInterval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % words.length);
-    }, 900);
-
     return () => {
       cancelAnimationFrame(frameRef.current);
+    };
+  }, [ready]);
+
+  useEffect(() => {
+    if (!finished) return;
+    const completeTimer = window.setTimeout(onComplete, 260);
+    return () => window.clearTimeout(completeTimer);
+  }, [finished, onComplete]);
+
+  useEffect(() => {
+    const wordInterval = setInterval(() => {
+      setWordIndex((prev) => (prev + 1) % LOADING_WORDS.length);
+    }, 430);
+
+    return () => {
       clearInterval(wordInterval);
     };
-  }, [onComplete, words.length]);
+  }, []);
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-[var(--color-bg)] flex flex-col justify-between p-8">
+    <motion.div
+      className="fixed inset-0 z-[9999] flex flex-col justify-between bg-[var(--color-bg)] p-6 md:p-8"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+    >
       {/* Top Left Label */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
@@ -57,10 +85,10 @@ export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -20, opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="text-4xl md:text-6xl lg:text-7xl font-display italic text-[var(--color-text-primary)]/80"
+            transition={{ duration: 0.28, ease: "easeInOut" }}
+            className="font-display text-5xl italic text-[var(--color-text-primary)]/85 md:text-7xl lg:text-8xl"
           >
-            {words[wordIndex]}
+            {LOADING_WORDS[wordIndex]}
           </motion.h2>
         </AnimatePresence>
       </div>
@@ -68,7 +96,7 @@ export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
       {/* Bottom Area */}
       <div>
         <div className="flex justify-end mb-4">
-          <div className="text-6xl md:text-8xl lg:text-9xl font-display text-[var(--color-text-primary)] tabular-nums">
+          <div className="font-display text-5xl text-[var(--color-text-primary)] tabular-nums md:text-7xl lg:text-8xl">
             {String(count).padStart(3, "0")}
           </div>
         </div>
@@ -80,11 +108,11 @@ export function LoadingScreen({ onComplete }: { onComplete: () => void }) {
             style={{ 
               transform: `scaleX(${count / 100})`,
               boxShadow: '0 0 8px rgba(137, 170, 204, 0.35)',
-              transition: 'transform 0.1s linear'
+              transition: 'transform 0.08s linear'
             }}
           />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
