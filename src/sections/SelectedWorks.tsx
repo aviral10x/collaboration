@@ -1,12 +1,89 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import Hls from 'hls.js';
 import { projects } from '../data/content';
+
+type CardProject = (typeof projects)[number];
+
+function getMuxStream(playbackId: string) {
+  return `https://stream.mux.com/${playbackId}.m3u8`;
+}
+
+function getMuxThumbnail(playbackId: string, width = 1920) {
+  return `https://image.mux.com/${playbackId}/thumbnail.jpg?width=${width}&fit_mode=preserve&time=3`;
+}
+
+function getBestVideoSource(project: CardProject) {
+  return project.muxPlaybackId ? getMuxStream(project.muxPlaybackId) : project.video;
+}
+
+function getBestPoster(project: CardProject) {
+  return project.muxPlaybackId ? getMuxThumbnail(project.muxPlaybackId) : project.image;
+}
+
+function useVideoSource(src: string) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const hlsRef = useRef<Hls | null>(null);
+  const [readyKey, setReadyKey] = useState(0);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    hlsRef.current?.destroy();
+    hlsRef.current = null;
+
+    const markReady = () => setReadyKey((value) => value + 1);
+
+    if (src.endsWith('.m3u8')) {
+      if (Hls.isSupported()) {
+        const hls = new Hls({
+          capLevelToPlayerSize: false,
+          startLevel: -1,
+          maxBufferLength: 24,
+        });
+
+        hlsRef.current = hls;
+        hls.loadSource(src);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, markReady);
+
+        return () => {
+          hls.destroy();
+        };
+      }
+
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = src;
+        video.addEventListener('loadedmetadata', markReady, { once: true });
+
+        return () => {
+          video.removeEventListener('loadedmetadata', markReady);
+          video.removeAttribute('src');
+          video.load();
+        };
+      }
+    }
+
+    video.src = src;
+    video.addEventListener('loadedmetadata', markReady, { once: true });
+    video.load();
+
+    return () => {
+      video.removeEventListener('loadedmetadata', markReady);
+      video.removeAttribute('src');
+      video.load();
+    };
+  }, [src]);
+
+  return { videoRef, readyKey };
+}
 
 /* ─────────────────────────────────────────────────────────────
  * LocalVideo lazily plays local MP4 previews on hover.
  * ───────────────────────────────────────────────────────────── */
-function useLocalVideoPlayer() {
-  const videoRef = useRef<HTMLVideoElement>(null);
+function useLocalVideoPlayer(src: string) {
+  const { videoRef } = useVideoSource(src);
   const [isPlaying, setIsPlaying] = useState(false);
 
   const play = useCallback(() => {
@@ -17,7 +94,7 @@ function useLocalVideoPlayer() {
     video.play()
       .then(() => setIsPlaying(true))
       .catch(() => setIsPlaying(false));
-  }, []);
+  }, [videoRef]);
 
   const pause = useCallback(() => {
     const video = videoRef.current;
@@ -26,7 +103,7 @@ function useLocalVideoPlayer() {
       video.currentTime = 0;
     }
     setIsPlaying(false);
-  }, []);
+  }, [videoRef]);
 
   return { videoRef, isPlaying, play, pause };
 }
@@ -34,18 +111,10 @@ function useLocalVideoPlayer() {
 /* ─────────────────────────────────────────────────────────────
  * VideoModal fullscreen local MP4 player with sound toggle
  * ───────────────────────────────────────────────────────────── */
-interface ModalProject {
-  title: string;
-  category: string;
-  year: string;
-  description: string;
-  accent: string;
-  image: string;
-  video: string;
-}
-
-function VideoModal({ project, onClose }: { project: ModalProject; onClose: () => void }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+function VideoModal({ project, onClose }: { project: CardProject; onClose: () => void }) {
+  const videoSource = getBestVideoSource(project);
+  const posterSource = getBestPoster(project);
+  const { videoRef, readyKey } = useVideoSource(videoSource);
   const [muted, setMuted] = useState(false);
 
   useEffect(() => {
@@ -54,7 +123,6 @@ function VideoModal({ project, onClose }: { project: ModalProject; onClose: () =
 
     async function startPlayback() {
       if (!video) return;
-      video.load();
       try {
         video.muted = false;
         await video.play();
@@ -70,7 +138,7 @@ function VideoModal({ project, onClose }: { project: ModalProject; onClose: () =
     return () => {
       document.body.style.overflow = '';
     };
-  }, [project.video]);
+  }, [videoSource, readyKey, videoRef]);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -109,8 +177,7 @@ function VideoModal({ project, onClose }: { project: ModalProject; onClose: () =
       >
         <video
           ref={videoRef}
-          src={project.video}
-          poster={project.image}
+          poster={posterSource}
           muted={muted}
           loop
           playsInline
@@ -158,11 +225,9 @@ function VideoModal({ project, onClose }: { project: ModalProject; onClose: () =
 }
 
 /* ─────────────────────────────────────────────────────────────
- * FeatureWorkCard shows local poster, plays local MP4 preview on hover,
+ * FeatureWorkCard shows a high-resolution poster, then plays the best available stream on hover,
  * click-to-expand into modal.
  * ───────────────────────────────────────────────────────────── */
-type CardProject = (typeof projects)[number];
-
 function FeatureWorkCard({
   project,
   index,
@@ -174,7 +239,9 @@ function FeatureWorkCard({
   featured?: boolean;
   onOpen: (p: CardProject) => void;
 }) {
-  const { videoRef, isPlaying, play, pause } = useLocalVideoPlayer();
+  const videoSource = getBestVideoSource(project);
+  const posterSource = getBestPoster(project);
+  const { videoRef, isPlaying, play, pause } = useLocalVideoPlayer(videoSource);
   const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
 
   function handleEnter() {
@@ -206,9 +273,9 @@ function FeatureWorkCard({
       onPointerEnter={handleEnter}
       onPointerLeave={handleLeave}
     >
-      {/* Local poster thumbnail */}
+      {/* High-resolution poster thumbnail */}
       <img
-        src={project.image}
+        src={posterSource}
         alt={project.title}
         className="absolute inset-0 w-full h-full object-cover"
         style={{
@@ -222,8 +289,7 @@ function FeatureWorkCard({
       {/* Streaming HLS video */}
       <video
         ref={videoRef}
-        src={project.previewVideo}
-        poster={project.image}
+        poster={posterSource}
         muted
         loop
         playsInline
