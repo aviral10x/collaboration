@@ -21,6 +21,10 @@ function getBestPoster(project: CardProject) {
   return project.muxPlaybackId ? getMuxThumbnail(project.muxPlaybackId) : project.image;
 }
 
+function isPortraitProject(project: CardProject) {
+  return 'orientation' in project && project.orientation === 'portrait';
+}
+
 function useVideoSource(src: string) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
@@ -115,6 +119,7 @@ function VideoModal({ project, onClose }: { project: CardProject; onClose: () =>
   const videoSource = getBestVideoSource(project);
   const posterSource = getBestPoster(project);
   const { videoRef, readyKey } = useVideoSource(videoSource);
+  const isPortrait = isPortraitProject(project);
   const [muted, setMuted] = useState(false);
 
   useEffect(() => {
@@ -157,10 +162,10 @@ function VideoModal({ project, onClose }: { project: CardProject; onClose: () =>
   return (
     <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center"
-      initial={{ opacity: 0 }}
+      initial={false}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.22 }}
       onClick={onClose}
     >
       {/* Backdrop */}
@@ -168,7 +173,12 @@ function VideoModal({ project, onClose }: { project: CardProject; onClose: () =>
 
       {/* Video Container */}
       <motion.div
-        className="relative w-full max-w-6xl mx-4 aspect-video rounded-2xl overflow-hidden border border-white/10"
+        className={`relative mx-4 overflow-hidden rounded-lg border border-white/10 bg-black ${
+          isPortrait
+            ? 'aspect-[9/16]'
+            : 'aspect-video w-full max-w-6xl'
+        }`}
+        style={isPortrait ? { width: 'min(92vw, 520px, calc(86dvh * 9 / 16))' } : undefined}
         initial={{ scale: 0.92, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.92, y: 20 }}
@@ -184,7 +194,7 @@ function VideoModal({ project, onClose }: { project: CardProject; onClose: () =>
           preload="auto"
           controls
           controlsList="nodownload noplaybackrate"
-          className="absolute inset-0 w-full h-full object-cover"
+          className={`absolute inset-0 h-full w-full ${isPortrait ? 'object-contain' : 'object-cover'}`}
         />
 
         {/* Top bar */}
@@ -243,6 +253,7 @@ function FeatureWorkCard({
   const posterSource = getBestPoster(project);
   const { videoRef, isPlaying, play, pause } = useLocalVideoPlayer(videoSource);
   const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches;
+  const isPortrait = isPortraitProject(project);
 
   function handleEnter() {
     if (isTouchDevice) return;
@@ -257,7 +268,11 @@ function FeatureWorkCard({
   return (
     <motion.div
       className={`group relative cursor-pointer overflow-hidden rounded-lg border border-white/10 bg-black ${
-        featured ? 'min-h-[520px] md:min-h-[680px]' : 'min-h-[500px] md:min-h-[620px]'
+        isPortrait
+          ? 'mx-auto aspect-[9/16] min-h-0 w-full max-w-[520px]'
+          : featured
+            ? 'min-h-[520px] md:min-h-[680px]'
+            : 'min-h-[500px] md:min-h-[620px]'
       }`}
       style={{
         boxShadow: isPlaying
@@ -435,7 +450,7 @@ export function SelectedWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.7, delay: index * 0.08, ease: [0.25, 0.1, 0.25, 1] }}
-              className={index === 1 ? 'lg:pt-20' : ''}
+              className={index === 1 ? 'flex justify-center lg:justify-end lg:pt-20' : ''}
             >
               <FeatureWorkCard
                 project={project}

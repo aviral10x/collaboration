@@ -43,6 +43,7 @@ export const projects = [
     image: '/previews/swiss-beauty.jpg',
     previewVideo: '/previews/swiss-beauty.mp4',
     video: '/videos/swiss-beauty.mp4',
+    orientation: 'portrait',
     accent: '#F0A7B7',
     muxAssetId: 'douLx5Yy3EQ900n010297hJ2aWZ8MxehhyptbD3zMdrCxs',
     muxPlaybackId: 'rrTveS82i5us8wBA02mddzP1YFqyikuCR01CEfC8plaoc',
