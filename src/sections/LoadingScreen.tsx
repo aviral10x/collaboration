@@ -1,32 +1,33 @@
 import { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-
-const LOADING_WORDS = ['Frame', 'Motion', 'Story'];
+import { motion } from 'framer-motion';
 
 export function LoadingScreen({
   ready = false,
   onComplete,
 }: {
   ready?: boolean;
-  onComplete: () => void;
+  onComplete?: () => void;
 }) {
   const [count, setCount] = useState(0);
-  const [wordIndex, setWordIndex] = useState(0);
   const [finished, setFinished] = useState(false);
-  const frameRef = useRef<number>(0);
   const startTimeRef = useRef<number | null>(null);
+  const completedRef = useRef(false);
 
   useEffect(() => {
-    const updateCounter = (timestamp: number) => {
-      if (!startTimeRef.current) startTimeRef.current = timestamp;
-      const elapsed = timestamp - startTimeRef.current;
+    const updateCounter = () => {
+      if (!startTimeRef.current) startTimeRef.current = Date.now();
+      const elapsed = Date.now() - startTimeRef.current;
       const minDuration = 900;
       const maxDuration = 1800;
       const shouldFinish = elapsed >= maxDuration || (ready && elapsed >= minDuration);
 
       if (shouldFinish) {
         setCount(100);
-        setFinished(true);
+        if (!completedRef.current) {
+          completedRef.current = true;
+          setFinished(true);
+          onComplete?.();
+        }
         return;
       }
 
@@ -34,63 +35,36 @@ export function LoadingScreen({
       const easedProgress = 1 - Math.pow(1 - progress, 3);
       const softCap = ready ? 96 : 84;
       setCount(Math.min(Math.floor(easedProgress * softCap), softCap));
-      frameRef.current = requestAnimationFrame(updateCounter);
     };
 
-    frameRef.current = requestAnimationFrame(updateCounter);
+    updateCounter();
+    const counterInterval = setInterval(updateCounter, 32);
 
     return () => {
-      cancelAnimationFrame(frameRef.current);
+      clearInterval(counterInterval);
     };
-  }, [ready]);
-
-  useEffect(() => {
-    if (!finished) return;
-    const completeTimer = window.setTimeout(onComplete, 260);
-    return () => window.clearTimeout(completeTimer);
-  }, [finished, onComplete]);
-
-  useEffect(() => {
-    const wordInterval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % LOADING_WORDS.length);
-    }, 430);
-
-    return () => {
-      clearInterval(wordInterval);
-    };
-  }, []);
+  }, [ready, onComplete]);
 
   return (
-    <motion.div
+    <div
       className="fixed inset-0 z-[9999] flex flex-col justify-between bg-[var(--color-bg)] p-6 md:p-8"
-      initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+      style={{
+        opacity: finished ? 0 : 1,
+        pointerEvents: finished ? 'none' : 'auto',
+        visibility: finished ? 'hidden' : 'visible',
+        transition: 'opacity 350ms cubic-bezier(0.25, 0.1, 0.25, 1)',
+      }}
+      aria-hidden={finished}
     >
-      {/* Top Left Label */}
-      <motion.div
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="text-xs text-[var(--color-muted)] uppercase tracking-[0.3em]"
-      >
-        Neural Studios
-      </motion.div>
-
-      {/* Center Rotating Words */}
       <div className="flex-1 flex items-center justify-center">
-        <AnimatePresence mode="wait">
-          <motion.h2
-            key={wordIndex}
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -20, opacity: 0 }}
-            transition={{ duration: 0.28, ease: "easeInOut" }}
-            className="font-display text-5xl italic text-[var(--color-text-primary)]/85 md:text-7xl lg:text-8xl"
-          >
-            {LOADING_WORDS[wordIndex]}
-          </motion.h2>
-        </AnimatePresence>
+        <motion.h1
+          initial={{ y: 24, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
+          className="font-display text-6xl italic leading-[0.88] text-[var(--color-text-primary)] md:text-8xl lg:text-9xl"
+        >
+          Neural Studios
+        </motion.h1>
       </div>
 
       {/* Bottom Area */}
@@ -113,6 +87,6 @@ export function LoadingScreen({
           />
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

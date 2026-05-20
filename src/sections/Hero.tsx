@@ -18,6 +18,8 @@ export function Hero({
   }, [isReady, onReady]);
 
   useLayoutEffect(() => {
+    let revealFallback: ReturnType<typeof setInterval> | undefined;
+
     const ctx = gsap.context(() => {
       gsap.set(".name-reveal", { opacity: 0, y: 50 });
       gsap.set(".blur-in", { opacity: 0, filter: "blur(10px)", y: 20 });
@@ -35,9 +37,20 @@ export function Hero({
         { opacity: 1, filter: "blur(0px)", y: 0, duration: 1, stagger: 0.1 },
         0.3
       );
+
+      const startedAt = Date.now();
+      revealFallback = setInterval(() => {
+        if (Date.now() - startedAt < 1700) return;
+        gsap.set(".name-reveal", { opacity: 1, y: 0 });
+        gsap.set(".blur-in", { opacity: 1, filter: "blur(0px)", y: 0 });
+        if (revealFallback) clearInterval(revealFallback);
+      }, 50);
     }, '#hero');
 
-    return () => ctx.revert();
+    return () => {
+      if (revealFallback) clearInterval(revealFallback);
+      ctx.revert();
+    };
   }, [playIntro]);
 
   return (
