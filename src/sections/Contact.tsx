@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useHlsVideo } from '../hooks/useHlsVideo';
 import { useSmoothScroll } from '../hooks/useSmoothScroll';
@@ -22,6 +22,24 @@ type ContactSubmissionPayload = FormState & {
   pageUrl: string;
 };
 
+type CalendlyInlineWidgetOptions = {
+  url: string;
+  parentElement: HTMLElement;
+  prefill?: {
+    name?: string;
+    email?: string;
+  };
+  resize?: boolean;
+};
+
+declare global {
+  interface Window {
+    Calendly?: {
+      initInlineWidget: (options: CalendlyInlineWidgetOptions) => void;
+    };
+  }
+}
+
 type IconProps = {
   className?: string;
   style?: CSSProperties;
@@ -41,6 +59,7 @@ const initialForm: FormState = {
 
 const totalSteps = 9;
 const calendlyBaseUrl = 'https://calendly.com/neuralstudios9/30min';
+const calendlyScriptUrl = 'https://assets.calendly.com/assets/external/widget.js';
 const accent = '#89AACC';
 const accentStrong = '#4E85BF';
 
@@ -64,6 +83,8 @@ function getCalendlyEmbedUrl() {
   url.searchParams.set('background_color', 'ffffff');
   url.searchParams.set('text_color', '21364f');
   url.searchParams.set('primary_color', '4E85BF');
+  url.searchParams.set('hide_event_type_details', '1');
+  url.searchParams.set('hide_gdpr_banner', '1');
   url.searchParams.set('embed_domain', embedDomain);
   url.searchParams.set('embed_type', 'Inline');
 
@@ -231,10 +252,14 @@ const socials = [
 export function Contact() {
   const { videoRef } = useHlsVideo('https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8');
   const { scrollToSection } = useSmoothScroll();
+  const calendlyContainerRef = useRef<HTMLDivElement | null>(null);
+  const submissionStartedRef = useRef(false);
+  const [calendlyElement, setCalendlyElement] = useState<HTMLDivElement | null>(null);
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(initialForm);
   const [error, setError] = useState('');
   const [bookedCall, setBookedCall] = useState(false);
+  const [calendlyLoaded, setCalendlyLoaded] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -243,17 +268,122 @@ export function Contact() {
   const canSubmit = bookedCall && !submitting;
   const calendlyEmbedUrl = getCalendlyEmbedUrl();
 
+  const setCalendlyContainer = useCallback((node: HTMLDivElement | null) => {
+    calendlyContainerRef.current = node;
+    setCalendlyElement(node);
+  }, []);
+
+  const submitApplication = useCallback(async (calendarConfirmed = bookedCall) => {
+    if (submissionStartedRef.current || submitted) return;
+
+    if (!calendarConfirmed) {
+      setError('Please book your discovery call before submitting.');
+      return;
+    }
+
+    submissionStartedRef.current = true;
+    setSubmitting(true);
+    setError('');
+
+    try {
+      const payload: ContactSubmissionPayload = {
+        ...form,
+        website: normalizeUrl(form.website),
+        calendlyCallBooked: calendarConfirmed,
+        pageUrl: window.location.href,
+      };
+
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setError(data.error ?? 'Something went wrong. Please try again.');
+        submissionStartedRef.current = false;
+        return;
+      }
+
+      setSubmitted(true);
+    } catch {
+      setError('Network error. Please check your connection and try again.');
+      submissionStartedRef.current = false;
+    } finally {
+      setSubmitting(false);
+    }
+  }, [bookedCall, form, submitted]);
+
   useEffect(() => {
     const handleCalendlyMessage = (event: MessageEvent) => {
       const data = event.data as { event?: string } | undefined;
-      if (data?.event === 'calendly.event_scheduled') {
+
+      if (event.origin === 'https://calendly.com' && data?.event === 'calendly.event_scheduled') {
         setBookedCall(true);
+        void submitApplication(true);
       }
     };
 
     window.addEventListener('message', handleCalendlyMessage);
     return () => window.removeEventListener('message', handleCalendlyMessage);
-  }, []);
+  }, [submitApplication]);
+
+  useEffect(() => {
+    if (step !== totalSteps || submitted) return;
+
+    if (!calendlyElement) return;
+
+    let cancelled = false;
+    setCalendlyLoaded(false);
+
+    const initCalendly = () => {
+      if (cancelled || !window.Calendly) return;
+
+      calendlyElement.innerHTML = '';
+      window.Calendly.initInlineWidget({
+        url: calendlyEmbedUrl,
+        parentElement: calendlyElement,
+        prefill: {
+          name: form.name,
+          email: form.email,
+        },
+        resize: true,
+      });
+      setCalendlyLoaded(true);
+    };
+
+    if (window.Calendly) {
+      initCalendly();
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const existingScript = document.querySelector<HTMLScriptElement>(`script[src="${calendlyScriptUrl}"]`);
+
+    if (existingScript) {
+      existingScript.addEventListener('load', initCalendly, { once: true });
+
+      return () => {
+        cancelled = true;
+        existingScript.removeEventListener('load', initCalendly);
+      };
+    }
+
+    const script = document.createElement('script');
+    script.src = calendlyScriptUrl;
+    script.async = true;
+    script.addEventListener('load', initCalendly, { once: true });
+    document.body.appendChild(script);
+
+    return () => {
+      cancelled = true;
+      script.removeEventListener('load', initCalendly);
+    };
+  }, [calendlyElement, calendlyEmbedUrl, form.email, form.name, step, submitted]);
 
   function update<Key extends keyof FormState>(key: Key, value: FormState[Key]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -322,41 +452,6 @@ export function Contact() {
   function handleBack() {
     setError('');
     setStep((prev) => Math.max(1, prev - 1));
-  }
-
-  async function handleSubmit() {
-    if (!canSubmit) return;
-    setSubmitting(true);
-    setError('');
-
-    try {
-      const payload: ContactSubmissionPayload = {
-        ...form,
-        website: normalizeUrl(form.website),
-        calendlyCallBooked: bookedCall,
-        pageUrl: window.location.href,
-      };
-
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-      const data = await response.json();
-
-      if (!data.success) {
-        setError('Something went wrong. Please try again.');
-        return;
-      }
-
-      setSubmitted(true);
-    } catch {
-      setError('Network error. Please check your connection and try again.');
-    } finally {
-      setSubmitting(false);
-    }
   }
 
   function handleEnter(event: KeyboardEvent<HTMLInputElement>) {
@@ -630,19 +725,21 @@ export function Contact() {
                           <p className="-mt-1 mb-5 max-w-3xl text-sm leading-6 text-[var(--color-muted)] md:text-base">
                             This 15-min call is required to map out your project and activate your application.
                           </p>
-                          <div className="overflow-hidden rounded-lg border border-white/15 bg-white">
-                            <iframe
-                              src={calendlyEmbedUrl}
-                              title="Book your discovery call"
-                              className="h-[680px] w-full bg-white"
-                              loading="lazy"
-                              referrerPolicy="strict-origin-when-cross-origin"
+                          <div className="relative overflow-hidden rounded-lg border border-white/15 bg-white">
+                            {!calendlyLoaded && (
+                              <div className="absolute inset-0 z-10 flex min-h-[620px] items-center justify-center bg-white text-sm font-medium text-[#21364f]">
+                                Loading calendar...
+                              </div>
+                            )}
+                            <div
+                              ref={setCalendlyContainer}
+                              className="min-h-[620px] w-full bg-white md:min-h-[680px]"
                             />
                           </div>
                           <div className="mt-6 flex flex-col gap-4 rounded-lg border border-white/12 bg-white/[0.04] px-5 py-4 text-sm text-[var(--color-muted)] md:flex-row md:items-center md:justify-between md:text-base">
                             <div className="flex items-center gap-3">
                               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: bookedCall ? accentStrong : accent }} />
-                              {bookedCall ? 'Booking confirmed.' : 'Waiting for booking confirmation...'}
+                              {submitting ? 'Booking confirmed. Sending your application...' : bookedCall ? 'Booking confirmed.' : 'Waiting for booking confirmation...'}
                             </div>
                             <div className="flex flex-wrap items-center gap-3">
                               <a
@@ -656,7 +753,10 @@ export function Contact() {
                               {!bookedCall && (
                                 <button
                                   type="button"
-                                  onClick={() => setBookedCall(true)}
+                                  onClick={() => {
+                                    setBookedCall(true);
+                                    void submitApplication(true);
+                                  }}
                                   className="rounded-full border border-white/12 px-4 py-2 text-xs font-medium text-[var(--color-text-primary)] transition-colors hover:border-white/35 md:text-sm"
                                 >
                                   I booked it
@@ -691,7 +791,7 @@ export function Contact() {
                   )}
                   <button
                     type="button"
-                    onClick={isLastStep ? () => void handleSubmit() : handleContinue}
+                    onClick={isLastStep ? () => void submitApplication() : handleContinue}
                     disabled={isLastStep ? !canSubmit : false}
                     className="flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-[var(--color-text-primary)] text-sm font-semibold text-[var(--color-bg)] transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:pointer-events-none disabled:bg-white/12 disabled:text-[var(--color-muted)] md:min-h-[48px]"
                   >

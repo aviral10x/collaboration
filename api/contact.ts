@@ -105,25 +105,41 @@ async function appendToSpreadsheet(submission: ContactSubmission, submittedAt: s
     return { configured: false, recorded: false };
   }
 
-  const response = await fetch(spreadsheetWebhookUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      submittedAt,
-      source: 'Neural Studios website',
-      row: submissionRow(submission, submittedAt),
-      fields: submission,
-    }),
-  });
+  try {
+    const response = await fetch(spreadsheetWebhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        submittedAt,
+        source: 'Neural Studios website',
+        row: submissionRow(submission, submittedAt),
+        fields: submission,
+      }),
+    });
 
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(`Spreadsheet webhook failed: ${response.status} ${message}`);
+    if (!response.ok) {
+      const message = await response.text();
+      console.error(`Spreadsheet webhook failed: ${response.status} ${message}`);
+
+      return {
+        configured: true,
+        recorded: false,
+        status: response.status,
+      };
+    }
+
+    return { configured: true, recorded: true };
+  } catch (error) {
+    console.error('Spreadsheet webhook failed:', error);
+
+    return {
+      configured: true,
+      recorded: false,
+      error: error instanceof Error ? error.message : 'Unknown spreadsheet error.',
+    };
   }
-
-  return { configured: true, recorded: true };
 }
 
 async function sendEmail(submission: ContactSubmission) {
