@@ -22,6 +22,11 @@ type ContactSubmissionPayload = FormState & {
   pageUrl: string;
 };
 
+type ContactApiResponse = {
+  success?: boolean;
+  error?: string;
+};
+
 type CalendlyInlineWidgetOptions = {
   url: string;
   parentElement: HTMLElement;
@@ -60,6 +65,7 @@ const initialForm: FormState = {
 const totalSteps = 9;
 const calendlyBaseUrl = 'https://calendly.com/neuralstudios9/30min';
 const calendlyScriptUrl = 'https://assets.calendly.com/assets/external/widget.js';
+const productionContactEndpoint = 'https://neuralstudios.io/api/contact';
 const accent = '#89AACC';
 const accentStrong = '#4E85BF';
 
@@ -89,6 +95,41 @@ function getCalendlyEmbedUrl() {
   url.searchParams.set('embed_type', 'Inline');
 
   return url.toString();
+}
+
+function getContactEndpoint() {
+  if (typeof window === 'undefined') return '/api/contact';
+
+  const isLocalhost =
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === '[::1]' ||
+    window.location.hostname === '::1';
+
+  return isLocalhost ? productionContactEndpoint : '/api/contact';
+}
+
+async function readContactResponse(response: Response): Promise<ContactApiResponse> {
+  const contentType = response.headers.get('content-type') ?? '';
+  const text = await response.text();
+
+  if (contentType.includes('application/json')) {
+    try {
+      return JSON.parse(text) as ContactApiResponse;
+    } catch {
+      return {
+        success: false,
+        error: 'The form service returned an invalid response. Please try again.',
+      };
+    }
+  }
+
+  console.error(`Contact endpoint returned non-JSON: ${response.status} ${text.slice(0, 300)}`);
+
+  return {
+    success: false,
+    error: 'The form service returned an invalid response. Please try again.',
+  };
 }
 
 const exploreLinks = [
@@ -293,14 +334,14 @@ export function Contact() {
         pageUrl: window.location.href,
       };
 
-      const response = await fetch('/api/contact', {
+      const response = await fetch(getContactEndpoint(), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
       });
-      const data = await response.json();
+      const data = await readContactResponse(response);
 
       if (!response.ok || !data.success) {
         setError(data.error ?? 'Something went wrong. Please try again.');

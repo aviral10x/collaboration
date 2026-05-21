@@ -21,6 +21,11 @@ type RequestWithMethod = IncomingMessage & {
   method?: string;
 };
 
+type Web3FormsResponse = {
+  success?: boolean;
+  message?: string;
+};
+
 const web3FormsAccessKey = process.env.WEB3FORMS_ACCESS_KEY ?? '5ef59b49-97e2-4d47-b503-5197e223d81a';
 const spreadsheetWebhookUrl =
   process.env.SPREADSHEET_WEBHOOK_URL ??
@@ -121,7 +126,7 @@ async function appendToSpreadsheet(submission: ContactSubmission, submittedAt: s
 
     if (!response.ok) {
       const message = await response.text();
-      console.error(`Spreadsheet webhook failed: ${response.status} ${message}`);
+      console.error(`Spreadsheet webhook failed: ${response.status} ${message.slice(0, 400)}`);
 
       return {
         configured: true,
@@ -164,7 +169,15 @@ async function sendEmail(submission: ContactSubmission) {
     method: 'POST',
     body: formData,
   });
-  const result = (await response.json()) as { success?: boolean; message?: string };
+  const text = await response.text();
+  let result: Web3FormsResponse;
+
+  try {
+    result = JSON.parse(text) as Web3FormsResponse;
+  } catch {
+    console.error(`Web3Forms returned a non-JSON response: ${response.status} ${text.slice(0, 400)}`);
+    throw new Error('Email service returned an invalid response.');
+  }
 
   if (!response.ok || !result.success) {
     throw new Error(result.message ?? 'Web3Forms submission failed.');
