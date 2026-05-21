@@ -17,6 +17,11 @@ type FormState = {
   timeline: string;
 };
 
+type ContactSubmissionPayload = FormState & {
+  calendlyCallBooked: boolean;
+  pageUrl: string;
+};
+
 type IconProps = {
   className?: string;
   style?: CSSProperties;
@@ -325,24 +330,19 @@ export function Contact() {
     setError('');
 
     try {
-      const formData = new FormData();
-      formData.append('access_key', '5ef59b49-97e2-4d47-b503-5197e223d81a');
-      formData.append('subject', `Neural Studios Application - ${form.name}`);
-      formData.append('from_name', 'Neural Studios Website');
-      formData.append('name', form.name);
-      formData.append('email', form.email);
-      formData.append('project_website_or_social_link', normalizeUrl(form.website));
-      formData.append('preferred_contact_method', form.contactMethod);
-      formData.append('contact_handle', form.contactHandle);
-      formData.append('looking_for', form.goal);
-      formData.append('project_details', form.projectDetails);
-      formData.append('monthly_budget', form.budget);
-      formData.append('ideal_timeline', form.timeline);
-      formData.append('calendly_call_booked', bookedCall ? 'Yes' : 'No');
+      const payload: ContactSubmissionPayload = {
+        ...form,
+        website: normalizeUrl(form.website),
+        calendlyCallBooked: bookedCall,
+        pageUrl: window.location.href,
+      };
 
-      const response = await fetch('https://api.web3forms.com/submit', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       });
       const data = await response.json();
 
@@ -384,6 +384,21 @@ export function Contact() {
 
       <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-7rem)] w-full max-w-[1440px] flex-col justify-between">
         <div className="mx-auto w-full max-w-[760px]">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-120px' }}
+            transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+            className="mb-9 text-center md:mb-11"
+          >
+            <h2 className="font-display text-[2.5rem] leading-[0.98] text-white sm:text-[2.8rem] md:text-[3rem] lg:text-[3.4rem]">
+              Let's bring your <span className="italic" style={{ color: accent }}>vision</span> to life
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[var(--color-muted)] md:text-base">
+              Answer a few quick questions and we'll get back to you within 24 hours.
+            </p>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
