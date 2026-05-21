@@ -54,7 +54,7 @@ export function Hero({
   }, [playIntro]);
 
   return (
-    <section id="hero" className="relative min-h-screen w-full overflow-hidden">
+    <section id="hero" className="relative min-h-[100svh] w-full overflow-hidden">
       {/* Background Video */}
       <div className="absolute inset-0 z-0 bg-[var(--color-bg)]">
         <video
@@ -70,11 +70,11 @@ export function Hero({
       </div>
 
       {/* Content */}
-      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1500px] flex-col items-center justify-center px-6 pb-28 pt-20 text-center md:pb-32 md:pt-24">
-        <h1 className="name-reveal mb-10 font-display text-6xl italic leading-[0.88] text-[var(--color-text-primary)] md:mb-12 md:text-8xl lg:text-9xl">
+      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[1500px] flex-col items-center justify-center px-4 pb-24 pt-20 text-center sm:px-6 md:pb-32 md:pt-24">
+        <h1 className="name-reveal mb-8 font-display text-5xl italic leading-[0.9] text-[var(--color-text-primary)] sm:text-6xl md:mb-12 md:text-8xl lg:text-9xl">
           Neural Studios
         </h1>
-        <p className="blur-in mb-12 max-w-xl text-sm leading-7 text-[var(--color-muted)] md:text-base">
+        <p className="blur-in mb-10 max-w-xl text-sm leading-7 text-[var(--color-muted)] md:mb-12 md:text-base">
           Cinematic films with atmosphere, taste, and momentum, crafted to make launches, products, and moments feel unforgettable.
         </p>
 
@@ -103,8 +103,8 @@ export function Hero({
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 md:bottom-12">
-        <span className="text-[10px] text-[var(--color-muted)] uppercase tracking-[0.2em]">SCROLL</span>
-        <div className="w-px h-10 bg-[var(--color-stroke)] overflow-hidden relative">
+        <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--color-muted)]">SCROLL</span>
+        <div className="relative h-8 w-px overflow-hidden bg-[var(--color-stroke)] md:h-10">
           <div className="w-full h-full bg-[var(--color-text-primary)]/50 absolute top-0 left-0 animate-[var(--animate-scroll-down)]" />
         </div>
       </div>

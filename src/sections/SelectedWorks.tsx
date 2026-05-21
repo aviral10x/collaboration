@@ -198,7 +198,7 @@ function VideoModal({ project, onClose }: { project: CardProject; onClose: () =>
         />
 
         {/* Top bar */}
-        <div className="absolute top-0 left-0 right-0 p-5 flex items-center justify-between z-10 bg-gradient-to-b from-black/60 to-transparent pointer-events-none">
+        <div className="absolute left-0 right-0 top-0 z-10 flex items-center justify-between bg-gradient-to-b from-black/60 to-transparent p-4 pointer-events-none md:p-5">
           <div className="pointer-events-auto">
             <span className="text-xs uppercase tracking-[0.2em] font-medium mr-3" style={{ color: project.accent }}>
               {project.category}
@@ -225,8 +225,8 @@ function VideoModal({ project, onClose }: { project: CardProject; onClose: () =>
         </div>
 
         {/* Bottom info */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between z-10 bg-gradient-to-t from-black/60 to-transparent pointer-events-none">
-          <p className="text-white/60 text-sm max-w-lg leading-relaxed">{project.description}</p>
+        <div className="absolute bottom-0 left-0 right-0 z-10 flex items-end justify-between gap-4 bg-gradient-to-t from-black/60 to-transparent p-4 pointer-events-none md:p-5">
+          <p className="max-w-lg text-xs leading-relaxed text-white/60 md:text-sm">{project.description}</p>
           <span className="text-xs tabular-nums" style={{ color: project.accent }}>{project.year}</span>
         </div>
       </motion.div>
@@ -269,10 +269,10 @@ function FeatureWorkCard({
     <motion.div
       className={`group relative cursor-pointer overflow-hidden rounded-lg border border-white/10 bg-black ${
         isPortrait
-          ? 'mx-auto aspect-[9/16] min-h-0 w-full max-w-[520px]'
+          ? 'mx-auto aspect-[9/16] min-h-0 w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[520px]'
           : featured
-            ? 'min-h-[520px] md:min-h-[680px]'
-            : 'min-h-[500px] md:min-h-[620px]'
+            ? 'min-h-[360px] sm:min-h-[460px] md:min-h-[620px] lg:min-h-[680px]'
+            : 'min-h-[340px] sm:min-h-[440px] md:min-h-[560px] lg:min-h-[620px]'
       }`}
       style={{
         boxShadow: isPlaying
@@ -382,7 +382,7 @@ function FeatureWorkCard({
         <div className="mb-5 h-px w-full bg-gradient-to-r from-white/40 via-white/10 to-transparent" />
         <div className="flex items-end justify-between gap-5">
           <div>
-            <h3 className="text-4xl leading-none text-white md:text-6xl">
+            <h3 className="text-3xl leading-none text-white sm:text-4xl md:text-6xl">
               {project.title}
             </h3>
             <p className="mt-3 max-w-xl text-xs leading-relaxed text-white/58 md:text-sm">
@@ -407,16 +407,16 @@ export function SelectedWorks() {
     .filter((project): project is CardProject => Boolean(project));
 
   return (
-    <section id="work" className="relative overflow-hidden bg-[var(--color-bg)] pb-20 pt-10 md:pb-32 md:pt-16">
+    <section id="work" className="relative overflow-hidden bg-[var(--color-bg)] pb-16 pt-10 md:pb-28 md:pt-16">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-16">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-16">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
-          className="mb-12 md:mb-16 grid gap-8 md:grid-cols-[1.05fr_0.95fr] md:items-end"
+          className="mb-10 grid gap-7 md:mb-16 md:grid-cols-[1.05fr_0.95fr] md:items-end"
         >
           <div>
             <div className="flex items-center gap-3 mb-5">
@@ -425,7 +425,7 @@ export function SelectedWorks() {
                 Selected Films
               </span>
             </div>
-            <h2 className="text-5xl md:text-7xl lg:text-8xl text-[var(--color-text-primary)] mb-5">
+            <h2 className="mb-5 text-4xl text-[var(--color-text-primary)] sm:text-5xl md:text-7xl lg:text-8xl">
               Proof of <span className="font-display italic">Work</span>
             </h2>
           </div>

@@ -47,7 +47,7 @@ export function LoadingScreen({
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex flex-col justify-between bg-[var(--color-bg)] p-6 md:p-8"
+      className="fixed inset-0 z-[9999] flex flex-col justify-between bg-[var(--color-bg)] p-5 sm:p-6 md:p-8"
       style={{
         opacity: finished ? 0 : 1,
         pointerEvents: finished ? 'none' : 'auto',
@@ -61,7 +61,7 @@ export function LoadingScreen({
           initial={{ y: 24, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
-          className="font-display text-6xl italic leading-[0.88] text-[var(--color-text-primary)] md:text-8xl lg:text-9xl"
+          className="font-display text-5xl italic leading-[0.9] text-[var(--color-text-primary)] sm:text-6xl md:text-8xl lg:text-9xl"
         >
           <span className="loading-brand">Neural Studios</span>
         </motion.h1>

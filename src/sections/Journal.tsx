@@ -5,16 +5,16 @@ const workflow = ['Strategy', 'Generation', 'Edit', 'Deploy'];
 
 export function Journal() {
   return (
-    <section id="journal" className="relative overflow-hidden bg-[var(--color-bg)] py-20 md:py-32">
+    <section id="journal" className="relative overflow-hidden bg-[var(--color-bg)] py-16 md:py-28">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 lg:px-16">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-16">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
-          className="mb-12 md:mb-16 grid gap-8 md:grid-cols-[0.9fr_1.1fr] md:items-end"
+          className="mb-10 grid gap-7 md:mb-16 md:grid-cols-[0.9fr_1.1fr] md:items-end"
         >
           <div>
             <div className="flex items-center gap-3 mb-5">
@@ -23,7 +23,7 @@ export function Journal() {
                 What We Make
               </span>
             </div>
-            <h2 className="text-5xl md:text-6xl lg:text-7xl text-[var(--color-text-primary)] mb-5">
+            <h2 className="mb-5 text-4xl text-[var(--color-text-primary)] sm:text-5xl md:text-6xl lg:text-7xl">
               Campaign <span className="font-display italic">Systems</span>
             </h2>
           </div>
@@ -45,16 +45,16 @@ export function Journal() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.7, delay: i * 0.08, ease: [0.25, 0.1, 0.25, 1] }}
-              className="group relative min-h-[520px] overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] p-7 transition-colors duration-500 hover:bg-white/[0.055] md:p-9"
+              className="group relative min-h-[380px] overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] p-5 transition-colors duration-500 hover:bg-white/[0.055] sm:min-h-[420px] md:min-h-[500px] md:p-8 lg:min-h-[520px] lg:p-9"
             >
               <div
                 className="absolute right-0 top-0 h-40 w-40 rounded-full blur-3xl transition-opacity duration-500 group-hover:opacity-70"
                 style={{ backgroundColor: service.accent, opacity: 0.18 }}
               />
 
-              <div className="relative flex h-full flex-col justify-between gap-12">
+              <div className="relative flex h-full flex-col justify-between gap-9 md:gap-12">
                 <div>
-                  <div className="mb-8 flex items-center justify-between">
+                  <div className="mb-6 flex items-center justify-between md:mb-8">
                     <span className="text-xs uppercase tracking-[0.24em] text-[var(--color-muted)]">
                       {service.label}
                     </span>
@@ -63,7 +63,7 @@ export function Journal() {
                     </span>
                   </div>
 
-                  <h3 className="mb-5 max-w-md text-3xl leading-none text-[var(--color-text-primary)] md:text-5xl">
+                  <h3 className="mb-5 max-w-md text-2xl leading-none text-[var(--color-text-primary)] sm:text-3xl md:text-5xl">
                   {service.title}
                   </h3>
 

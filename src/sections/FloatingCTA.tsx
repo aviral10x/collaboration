@@ -18,34 +18,30 @@ export function FloatingCTA() {
 
     if (!hero || !contact) return;
 
-    const heroObs = new IntersectionObserver(
-      ([entry]) => {
-        // Show once hero is no longer in view
-        if (!entry.isIntersecting) {
-          setVisible(true);
-        } else {
-          setVisible(false);
-        }
-      },
-      { threshold: 0.1 }
-    );
+    let frame = 0;
 
-    const contactObs = new IntersectionObserver(
-      ([entry]) => {
-        // Hide when contact section is visible
-        if (entry.isIntersecting) {
-          setVisible(false);
-        }
-      },
-      { threshold: 0.15 }
-    );
+    const updateVisibility = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const heroRect = hero.getBoundingClientRect();
+        const contactRect = contact.getBoundingClientRect();
+        const heroVisible = heroRect.bottom > window.innerHeight * 0.12;
+        const contactVisible =
+          contactRect.top < window.innerHeight * 0.86 &&
+          contactRect.bottom > window.innerHeight * 0.12;
 
-    heroObs.observe(hero);
-    contactObs.observe(contact);
+        setVisible(!heroVisible && !contactVisible);
+      });
+    };
+
+    updateVisibility();
+    window.addEventListener('scroll', updateVisibility, { passive: true });
+    window.addEventListener('resize', updateVisibility);
 
     return () => {
-      heroObs.disconnect();
-      contactObs.disconnect();
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', updateVisibility);
+      window.removeEventListener('resize', updateVisibility);
     };
   }, []);
 
@@ -61,7 +57,7 @@ export function FloatingCTA() {
           transition={{ type: 'spring', stiffness: 280, damping: 24 }}
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.95 }}
-          className="fixed bottom-8 right-8 z-40 group"
+          className="fixed bottom-5 right-5 z-40 group sm:bottom-8 sm:right-8"
           aria-label="Get in touch"
         >
           {/* Outer glow ring on hover */}

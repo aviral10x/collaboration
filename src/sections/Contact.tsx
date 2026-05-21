@@ -367,7 +367,7 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-[var(--color-bg)] px-6 py-12 md:px-10 md:py-16">
+    <section id="contact" className="relative overflow-hidden bg-[var(--color-bg)] px-4 py-10 sm:px-6 md:px-10 md:py-12 xl:py-14">
       <div className="absolute inset-0 z-0 bg-[var(--color-bg)]">
         <video
           ref={videoRef}
@@ -382,14 +382,14 @@ export function Contact() {
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[var(--color-bg)] to-transparent" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-7rem)] w-full max-w-[1440px] flex-col justify-between">
+      <div className="relative z-10 mx-auto w-full max-w-[1440px]">
         <div className="mx-auto w-full max-w-[760px]">
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-120px' }}
             transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-            className="mb-9 text-center md:mb-11"
+            className="mb-7 text-center md:mb-9"
           >
             <h2 className="font-display text-[2.5rem] leading-[0.98] text-white sm:text-[2.8rem] md:text-[3rem] lg:text-[3.4rem]">
               Let's bring your <span className="italic" style={{ color: accent }}>vision</span> to life
@@ -405,11 +405,11 @@ export function Contact() {
             viewport={{ once: true, margin: '-120px' }}
             transition={{ duration: 0.75, ease: [0.25, 0.1, 0.25, 1] }}
             data-contact-panel
-            className="relative overflow-hidden rounded-lg border border-white/10 bg-black/34 p-5 shadow-[0_28px_100px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl md:p-7 lg:p-8"
+            className="relative overflow-hidden rounded-lg border border-white/10 bg-black/34 p-4 shadow-[0_28px_100px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl sm:p-5 md:p-7 lg:p-8"
           >
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.055),rgba(255,255,255,0)_42%,rgba(137,170,204,0.06))]" />
-            <div className="relative flex min-h-[360px] flex-col md:min-h-[390px]">
-              <div className="mb-8 md:mb-10">
+            <div className="relative flex min-h-[340px] flex-col md:min-h-[370px]">
+              <div className="mb-7 md:mb-9">
                 <div className="mb-4 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--color-muted)]">
                   <span>STEP {step} OF {totalSteps}</span>
                   <span>{progress}%</span>
@@ -720,7 +720,7 @@ function QuestionTitle({ children }: { children: ReactNode }) {
 
 function SiteFooter({ scrollToSection }: { scrollToSection: (target: string) => void }) {
   return (
-    <footer className="mt-14 grid gap-8 border-t border-white/10 pt-6 md:grid-cols-[1fr_1.4fr_1fr] md:items-start">
+    <footer className="mt-9 grid gap-7 border-t border-white/10 pt-6 sm:mt-10 md:mt-12 md:grid-cols-[1fr_1.4fr_1fr] md:items-start">
       <div>
         <h3 className="mb-4 text-sm text-[var(--color-text-primary)]">Follow Us</h3>
         <div className="flex items-center gap-2">
