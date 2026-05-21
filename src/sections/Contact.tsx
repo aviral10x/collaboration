@@ -35,7 +35,7 @@ const initialForm: FormState = {
 };
 
 const totalSteps = 9;
-const calendlyUrl = 'https://calendly.com/neuralstudios9/30min?hide_gdpr_banner=1&background_color=ffffff&text_color=21364f&primary_color=4E85BF';
+const calendlyBaseUrl = 'https://calendly.com/neuralstudios9/30min';
 const accent = '#89AACC';
 const accentStrong = '#4E85BF';
 
@@ -50,6 +50,20 @@ const needsOptions = [
 
 const budgetOptions = ['$1,500 - $3,000', '$3,000 - $5,000', '$5,000 - $10,000', '$10,000+'];
 const timelineOptions = ['ASAP (this week)', 'This month', 'Within 30 days'];
+
+function getCalendlyEmbedUrl() {
+  const embedDomain = typeof window === 'undefined' ? 'neuralstudios.io' : window.location.hostname;
+  const url = new URL(calendlyBaseUrl);
+
+  url.searchParams.set('hide_gdpr_banner', '1');
+  url.searchParams.set('background_color', 'ffffff');
+  url.searchParams.set('text_color', '21364f');
+  url.searchParams.set('primary_color', '4E85BF');
+  url.searchParams.set('embed_domain', embedDomain);
+  url.searchParams.set('embed_type', 'Inline');
+
+  return url.toString();
+}
 
 const exploreLinks = [
   { label: 'Home', target: 'hero' },
@@ -161,7 +175,7 @@ function FieldShell({
 }) {
   return (
     <div
-      className="flex min-h-[82px] items-center gap-5 rounded-lg border bg-white/[0.035] px-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)] transition-colors duration-300 md:min-h-[92px] md:px-7"
+      className="flex min-h-[74px] items-center gap-4 rounded-lg border bg-white/[0.035] px-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)] transition-colors duration-300 md:min-h-[82px] md:gap-5 md:px-6"
       style={{
         borderColor: active ? accent : 'rgba(255,255,255,0.13)',
         boxShadow: active
@@ -187,7 +201,7 @@ function OptionButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-[76px] w-full items-center gap-5 rounded-lg border bg-white/[0.03] px-5 text-left text-lg font-medium text-[var(--color-muted)] transition-all duration-300 hover:border-white/28 hover:text-white md:min-h-[84px] md:px-7 md:text-2xl"
+      className="flex min-h-[66px] w-full items-center gap-4 rounded-lg border bg-white/[0.03] px-5 text-left text-base font-medium text-[var(--color-muted)] transition-all duration-300 hover:border-white/28 hover:text-white md:min-h-[74px] md:gap-5 md:px-6 md:text-xl"
       style={{
         borderColor: selected ? accent : 'rgba(255,255,255,0.12)',
         background: selected ? 'rgba(137, 170, 204, 0.11)' : 'rgba(255,255,255,0.03)',
@@ -222,6 +236,7 @@ export function Contact() {
   const progress = Math.round((step / totalSteps) * 100);
   const isLastStep = step === totalSteps;
   const canSubmit = bookedCall && !submitting;
+  const calendlyEmbedUrl = getCalendlyEmbedUrl();
 
   useEffect(() => {
     const handleCalendlyMessage = (event: MessageEvent) => {
@@ -374,7 +389,8 @@ export function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-120px' }}
             transition={{ duration: 0.75, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative overflow-hidden rounded-lg border border-white/10 bg-black/34 p-5 shadow-[0_28px_100px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl md:p-9 lg:p-11"
+            data-contact-panel
+            className="relative overflow-hidden rounded-lg border border-white/10 bg-black/34 p-5 shadow-[0_28px_100px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl md:p-8 lg:p-10"
           >
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.055),rgba(255,255,255,0)_42%,rgba(137,170,204,0.06))]" />
             <div className="relative flex min-h-[620px] flex-col">
@@ -385,6 +401,7 @@ export function Contact() {
                 </div>
                 <div className="h-[3px] w-full overflow-hidden rounded-full bg-white/10">
                   <motion.div
+                    data-contact-progress
                     className="h-full rounded-full accent-gradient"
                     initial={false}
                     animate={{ width: `${progress}%` }}
@@ -431,7 +448,7 @@ export function Contact() {
                               onKeyDown={handleEnter}
                               autoComplete="name"
                               autoFocus
-                              className="w-full bg-transparent text-2xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-3xl"
+                              className="w-full bg-transparent text-xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-2xl"
                             />
                           </FieldShell>
                         </div>
@@ -449,7 +466,7 @@ export function Contact() {
                               onKeyDown={handleEnter}
                               autoComplete="email"
                               autoFocus
-                              className="w-full bg-transparent text-2xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-3xl"
+                              className="w-full bg-transparent text-xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-2xl"
                             />
                           </FieldShell>
                         </div>
@@ -467,7 +484,7 @@ export function Contact() {
                               onKeyDown={handleEnter}
                               placeholder="https://"
                               autoFocus
-                              className="w-full bg-transparent text-2xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-3xl"
+                              className="w-full bg-transparent text-xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-2xl"
                             />
                           </FieldShell>
                         </div>
@@ -488,7 +505,7 @@ export function Contact() {
                                     update('contactMethod', method);
                                     update('contactHandle', '');
                                   }}
-                                  className="flex min-h-[132px] flex-col items-center justify-center gap-4 rounded-lg border bg-white/[0.03] text-xl font-medium text-[var(--color-muted)] transition-all duration-300 hover:border-white/28 hover:text-white md:min-h-[150px] md:text-2xl"
+                                  className="flex min-h-[108px] flex-col items-center justify-center gap-3 rounded-lg border bg-white/[0.03] text-lg font-medium text-[var(--color-muted)] transition-all duration-300 hover:border-white/28 hover:text-white md:min-h-[124px] md:text-xl"
                                   style={{
                                     borderColor: isSelected ? accent : 'rgba(255,255,255,0.12)',
                                     background: isSelected ? 'rgba(137, 170, 204, 0.1)' : 'rgba(255,255,255,0.03)',
@@ -514,7 +531,7 @@ export function Contact() {
                               onKeyDown={handleEnter}
                               placeholder={form.contactMethod === 'Telegram' ? '@yo' : '+1 234 567 8900'}
                               autoFocus
-                              className="w-full bg-transparent text-2xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-3xl"
+                              className="w-full bg-transparent text-xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-2xl"
                             />
                           </FieldShell>
                         </div>
@@ -540,14 +557,14 @@ export function Contact() {
                       {step === 6 && (
                         <div>
                           <QuestionTitle>Tell us about your project</QuestionTitle>
-                          <p className="-mt-2 mb-8 text-base leading-7 text-[var(--color-muted)] md:text-lg">
+                          <p className="-mt-1 mb-7 text-sm leading-6 text-[var(--color-muted)] md:text-base">
                             What are you building and why do you need video content?
                           </p>
                           <textarea
                             value={form.projectDetails}
                             onChange={(event) => update('projectDetails', event.target.value)}
                             autoFocus
-                            className="min-h-[220px] w-full resize-none rounded-lg border bg-white/[0.035] p-6 text-xl leading-relaxed text-white outline-none placeholder:text-[var(--color-muted)] md:min-h-[260px] md:text-2xl"
+                            className="min-h-[200px] w-full resize-none rounded-lg border bg-white/[0.035] p-5 text-lg leading-relaxed text-white outline-none placeholder:text-[var(--color-muted)] md:min-h-[235px] md:p-6 md:text-xl"
                             style={{
                               borderColor: error ? '#ff6565' : accent,
                               boxShadow: error
@@ -595,19 +612,42 @@ export function Contact() {
                       {step === 9 && (
                         <div>
                           <QuestionTitle>Book your discovery call</QuestionTitle>
-                          <p className="-mt-2 mb-8 max-w-3xl text-base leading-7 text-[var(--color-muted)] md:text-lg">
+                          <p className="-mt-1 mb-7 max-w-3xl text-sm leading-6 text-[var(--color-muted)] md:text-base">
                             This 15-min call is required to map out your project and activate your application.
                           </p>
                           <div className="overflow-hidden rounded-lg border border-white/15 bg-white">
                             <iframe
-                              src={calendlyUrl}
+                              src={calendlyEmbedUrl}
                               title="Book your discovery call"
                               className="h-[680px] w-full bg-white"
+                              loading="lazy"
+                              referrerPolicy="strict-origin-when-cross-origin"
                             />
                           </div>
-                          <div className="mt-7 flex min-h-[64px] items-center gap-4 rounded-lg border border-white/12 bg-white/[0.04] px-5 text-base text-[var(--color-muted)]">
-                            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: accent }} />
-                            {bookedCall ? 'Booking confirmed.' : 'Waiting for booking confirmation...'}
+                          <div className="mt-6 flex flex-col gap-4 rounded-lg border border-white/12 bg-white/[0.04] px-5 py-4 text-sm text-[var(--color-muted)] md:flex-row md:items-center md:justify-between md:text-base">
+                            <div className="flex items-center gap-3">
+                              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: bookedCall ? accentStrong : accent }} />
+                              {bookedCall ? 'Booking confirmed.' : 'Waiting for booking confirmation...'}
+                            </div>
+                            <div className="flex flex-wrap items-center gap-3">
+                              <a
+                                href={calendlyBaseUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-full border border-white/12 px-4 py-2 text-xs font-medium text-[var(--color-text-primary)] transition-colors hover:border-white/35 md:text-sm"
+                              >
+                                Open Calendly
+                              </a>
+                              {!bookedCall && (
+                                <button
+                                  type="button"
+                                  onClick={() => setBookedCall(true)}
+                                  className="rounded-full border border-white/12 px-4 py-2 text-xs font-medium text-[var(--color-text-primary)] transition-colors hover:border-white/35 md:text-sm"
+                                >
+                                  I booked it
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       )}
@@ -628,7 +668,7 @@ export function Contact() {
                     <button
                       type="button"
                       onClick={handleBack}
-                      className="flex min-h-[68px] items-center justify-center gap-4 rounded-lg border border-white/12 bg-white/[0.025] text-base font-medium text-[var(--color-muted)] transition-colors hover:border-white/28 hover:text-white md:min-h-[78px] md:text-xl"
+                      className="flex min-h-[60px] items-center justify-center gap-3 rounded-lg border border-white/12 bg-white/[0.025] text-sm font-medium text-[var(--color-muted)] transition-colors hover:border-white/28 hover:text-white md:min-h-[68px] md:text-base"
                     >
                       <ArrowLeftIcon />
                       Back
@@ -638,7 +678,7 @@ export function Contact() {
                     type="button"
                     onClick={isLastStep ? () => void handleSubmit() : handleContinue}
                     disabled={isLastStep ? !canSubmit : false}
-                    className="flex min-h-[68px] items-center justify-center gap-4 rounded-lg bg-[var(--color-text-primary)] text-base font-semibold text-[var(--color-bg)] transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:pointer-events-none disabled:bg-white/12 disabled:text-[var(--color-muted)] md:min-h-[78px] md:text-xl"
+                    className="flex min-h-[60px] items-center justify-center gap-3 rounded-lg bg-[var(--color-text-primary)] text-sm font-semibold text-[var(--color-bg)] transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:pointer-events-none disabled:bg-white/12 disabled:text-[var(--color-muted)] md:min-h-[68px] md:text-base"
                   >
                     {isLastStep ? (submitting ? 'Submitting...' : 'Submit') : 'Continue'}
                     {isLastStep ? <CheckIcon /> : <ArrowRightIcon />}
@@ -657,7 +697,7 @@ export function Contact() {
 
 function QuestionTitle({ children }: { children: ReactNode }) {
   return (
-    <h2 className="mb-5 font-display text-[clamp(3.3rem,6.7vw,6.4rem)] leading-none text-white">
+    <h2 className="mb-5 font-display text-[2.65rem] leading-[0.95] text-white sm:text-5xl md:text-[4rem] lg:text-[4.6rem]">
       {children} <span className="italic" style={{ color: accent }}>*</span>
     </h2>
   );
