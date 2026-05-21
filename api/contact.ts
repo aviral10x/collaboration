@@ -26,7 +26,7 @@ type Web3FormsResponse = {
   message?: string;
 };
 
-const web3FormsAccessKey = process.env.WEB3FORMS_ACCESS_KEY ?? '5ef59b49-97e2-4d47-b503-5197e223d81a';
+const web3FormsAccessKey = process.env.WEB3FORMS_ACCESS_KEY;
 const spreadsheetWebhookUrl =
   process.env.SPREADSHEET_WEBHOOK_URL ??
   process.env.GOOGLE_SHEETS_WEBHOOK_URL ??
@@ -148,6 +148,10 @@ async function appendToSpreadsheet(submission: ContactSubmission, submittedAt: s
 }
 
 async function sendEmail(submission: ContactSubmission) {
+  if (!web3FormsAccessKey) {
+    return { configured: false, sent: false };
+  }
+
   const formData = new FormData();
 
   formData.append('access_key', web3FormsAccessKey);
@@ -165,25 +169,47 @@ async function sendEmail(submission: ContactSubmission) {
   formData.append('calendly_call_booked', submission.calendlyCallBooked ? 'Yes' : 'No');
   formData.append('page_url', submission.pageUrl);
 
-  const response = await fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    body: formData,
-  });
-  const text = await response.text();
-  let result: Web3FormsResponse;
-
   try {
-    result = JSON.parse(text) as Web3FormsResponse;
-  } catch {
-    console.error(`Web3Forms returned a non-JSON response: ${response.status} ${text.slice(0, 400)}`);
-    throw new Error('Email service returned an invalid response.');
-  }
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      body: formData,
+    });
+    const text = await response.text();
+    let result: Web3FormsResponse;
 
-  if (!response.ok || !result.success) {
-    throw new Error(result.message ?? 'Web3Forms submission failed.');
-  }
+    try {
+      result = JSON.parse(text) as Web3FormsResponse;
+    } catch {
+      console.error(`Web3Forms returned a non-JSON response: ${response.status} ${text.slice(0, 400)}`);
 
-  return { sent: true };
+      return {
+        configured: true,
+        sent: false,
+        status: response.status,
+      };
+    }
+
+    if (!response.ok || !result.success) {
+      console.error(`Web3Forms submission failed: ${result.message ?? response.status}`);
+
+      return {
+        configured: true,
+        sent: false,
+        status: response.status,
+        error: result.message ?? 'Web3Forms submission failed.',
+      };
+    }
+
+    return { configured: true, sent: true };
+  } catch (error) {
+    console.error('Web3Forms submission failed:', error);
+
+    return {
+      configured: true,
+      sent: false,
+      error: error instanceof Error ? error.message : 'Unknown email error.',
+    };
+  }
 }
 
 export default async function handler(request: RequestWithMethod, response: ServerResponse) {
