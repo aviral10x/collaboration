@@ -175,7 +175,7 @@ function FieldShell({
 }) {
   return (
     <div
-      className="flex min-h-[74px] items-center gap-4 rounded-lg border bg-white/[0.035] px-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)] transition-colors duration-300 md:min-h-[82px] md:gap-5 md:px-6"
+      className="flex min-h-[58px] items-center gap-3 rounded-lg border bg-white/[0.035] px-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)] transition-colors duration-300 md:min-h-[64px] md:gap-4 md:px-5"
       style={{
         borderColor: active ? accent : 'rgba(255,255,255,0.13)',
         boxShadow: active
@@ -201,7 +201,7 @@ function OptionButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-[66px] w-full items-center gap-4 rounded-lg border bg-white/[0.03] px-5 text-left text-base font-medium text-[var(--color-muted)] transition-all duration-300 hover:border-white/28 hover:text-white md:min-h-[74px] md:gap-5 md:px-6 md:text-xl"
+      className="flex min-h-[50px] w-full items-center gap-3 rounded-lg border bg-white/[0.03] px-4 text-left text-sm font-medium text-[var(--color-muted)] transition-all duration-300 hover:border-white/28 hover:text-white md:min-h-[58px] md:gap-4 md:px-5 md:text-base"
       style={{
         borderColor: selected ? accent : 'rgba(255,255,255,0.12)',
         background: selected ? 'rgba(137, 170, 204, 0.11)' : 'rgba(255,255,255,0.03)',
@@ -209,7 +209,7 @@ function OptionButton({
         boxShadow: selected ? `0 0 0 1px ${accent}88, 0 0 28px ${accentStrong}1f` : undefined,
       }}
     >
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center" style={{ color: selected ? accent : 'transparent' }}>
+      <span className="flex h-6 w-6 shrink-0 items-center justify-center" style={{ color: selected ? accent : 'transparent' }}>
         {selected && <CheckIcon />}
       </span>
       {children}
@@ -383,19 +383,19 @@ export function Contact() {
       </div>
 
       <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-7rem)] w-full max-w-[1440px] flex-col justify-between">
-        <div className="mx-auto w-full max-w-[980px]">
+        <div className="mx-auto w-full max-w-[760px]">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-120px' }}
             transition={{ duration: 0.75, ease: [0.25, 0.1, 0.25, 1] }}
             data-contact-panel
-            className="relative overflow-hidden rounded-lg border border-white/10 bg-black/34 p-5 shadow-[0_28px_100px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl md:p-8 lg:p-10"
+            className="relative overflow-hidden rounded-lg border border-white/10 bg-black/34 p-5 shadow-[0_28px_100px_rgba(0,0,0,0.48),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl md:p-7 lg:p-8"
           >
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.055),rgba(255,255,255,0)_42%,rgba(137,170,204,0.06))]" />
-            <div className="relative flex min-h-[620px] flex-col">
-              <div className="mb-12 md:mb-16">
-                <div className="mb-4 flex items-center justify-between text-xs font-semibold uppercase tracking-[0.28em] text-[var(--color-muted)] md:text-sm">
+            <div className="relative flex min-h-[360px] flex-col md:min-h-[390px]">
+              <div className="mb-8 md:mb-10">
+                <div className="mb-4 flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--color-muted)]">
                   <span>STEP {step} OF {totalSteps}</span>
                   <span>{progress}%</span>
                 </div>
@@ -410,7 +410,7 @@ export function Contact() {
                 </div>
               </div>
 
-              <div className="flex flex-1 flex-col">
+              <div>
                 <AnimatePresence mode="wait">
                   {submitted ? (
                     <motion.div
@@ -435,7 +435,7 @@ export function Contact() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -18 }}
                       transition={{ duration: 0.32 }}
-                      className="flex flex-1 flex-col"
+                      className="flex flex-col"
                     >
                       {step === 1 && (
                         <div>
@@ -448,7 +448,7 @@ export function Contact() {
                               onKeyDown={handleEnter}
                               autoComplete="name"
                               autoFocus
-                              className="w-full bg-transparent text-xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-2xl"
+                              className="w-full bg-transparent text-base text-white outline-none placeholder:text-[var(--color-muted)] md:text-lg"
                             />
                           </FieldShell>
                         </div>
@@ -466,7 +466,7 @@ export function Contact() {
                               onKeyDown={handleEnter}
                               autoComplete="email"
                               autoFocus
-                              className="w-full bg-transparent text-xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-2xl"
+                              className="w-full bg-transparent text-base text-white outline-none placeholder:text-[var(--color-muted)] md:text-lg"
                             />
                           </FieldShell>
                         </div>
@@ -484,7 +484,7 @@ export function Contact() {
                               onKeyDown={handleEnter}
                               placeholder="https://"
                               autoFocus
-                              className="w-full bg-transparent text-xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-2xl"
+                              className="w-full bg-transparent text-base text-white outline-none placeholder:text-[var(--color-muted)] md:text-lg"
                             />
                           </FieldShell>
                         </div>
@@ -493,7 +493,7 @@ export function Contact() {
                       {step === 4 && (
                         <div>
                           <QuestionTitle>How can we reach you?</QuestionTitle>
-                          <div className="mb-8 grid gap-4 md:grid-cols-2">
+                          <div className="mb-5 grid gap-3 md:grid-cols-2">
                             {(['Telegram', 'WhatsApp'] as ContactMethod[]).map((method) => {
                               const isSelected = form.contactMethod === method;
                               const Icon = method === 'Telegram' ? ChatIcon : PhoneIcon;
@@ -505,7 +505,7 @@ export function Contact() {
                                     update('contactMethod', method);
                                     update('contactHandle', '');
                                   }}
-                                  className="flex min-h-[108px] flex-col items-center justify-center gap-3 rounded-lg border bg-white/[0.03] text-lg font-medium text-[var(--color-muted)] transition-all duration-300 hover:border-white/28 hover:text-white md:min-h-[124px] md:text-xl"
+                                  className="flex min-h-[82px] flex-col items-center justify-center gap-2 rounded-lg border bg-white/[0.03] text-base font-medium text-[var(--color-muted)] transition-all duration-300 hover:border-white/28 hover:text-white md:min-h-[92px] md:text-lg"
                                   style={{
                                     borderColor: isSelected ? accent : 'rgba(255,255,255,0.12)',
                                     background: isSelected ? 'rgba(137, 170, 204, 0.1)' : 'rgba(255,255,255,0.03)',
@@ -531,7 +531,7 @@ export function Contact() {
                               onKeyDown={handleEnter}
                               placeholder={form.contactMethod === 'Telegram' ? '@yo' : '+1 234 567 8900'}
                               autoFocus
-                              className="w-full bg-transparent text-xl text-white outline-none placeholder:text-[var(--color-muted)] md:text-2xl"
+                              className="w-full bg-transparent text-base text-white outline-none placeholder:text-[var(--color-muted)] md:text-lg"
                             />
                           </FieldShell>
                         </div>
@@ -540,7 +540,7 @@ export function Contact() {
                       {step === 5 && (
                         <div>
                           <QuestionTitle>What are you looking for?</QuestionTitle>
-                          <div className="space-y-3">
+                          <div className="space-y-2.5">
                             {needsOptions.map((option) => (
                               <OptionButton
                                 key={option}
@@ -557,14 +557,14 @@ export function Contact() {
                       {step === 6 && (
                         <div>
                           <QuestionTitle>Tell us about your project</QuestionTitle>
-                          <p className="-mt-1 mb-7 text-sm leading-6 text-[var(--color-muted)] md:text-base">
+                          <p className="-mt-1 mb-5 text-sm leading-6 text-[var(--color-muted)] md:text-base">
                             What are you building and why do you need video content?
                           </p>
                           <textarea
                             value={form.projectDetails}
                             onChange={(event) => update('projectDetails', event.target.value)}
                             autoFocus
-                            className="min-h-[200px] w-full resize-none rounded-lg border bg-white/[0.035] p-5 text-lg leading-relaxed text-white outline-none placeholder:text-[var(--color-muted)] md:min-h-[235px] md:p-6 md:text-xl"
+                            className="min-h-[170px] w-full resize-none rounded-lg border bg-white/[0.035] p-4 text-base leading-relaxed text-white outline-none placeholder:text-[var(--color-muted)] md:min-h-[200px] md:p-5 md:text-lg"
                             style={{
                               borderColor: error ? '#ff6565' : accent,
                               boxShadow: error
@@ -578,7 +578,7 @@ export function Contact() {
                       {step === 7 && (
                         <div>
                           <QuestionTitle>What's your monthly budget?</QuestionTitle>
-                          <div className="space-y-3">
+                          <div className="space-y-2.5">
                             {budgetOptions.map((option) => (
                               <OptionButton
                                 key={option}
@@ -595,7 +595,7 @@ export function Contact() {
                       {step === 8 && (
                         <div>
                           <QuestionTitle>Ideal timeline to start?</QuestionTitle>
-                          <div className="space-y-3">
+                          <div className="space-y-2.5">
                             {timelineOptions.map((option) => (
                               <OptionButton
                                 key={option}
@@ -612,7 +612,7 @@ export function Contact() {
                       {step === 9 && (
                         <div>
                           <QuestionTitle>Book your discovery call</QuestionTitle>
-                          <p className="-mt-1 mb-7 max-w-3xl text-sm leading-6 text-[var(--color-muted)] md:text-base">
+                          <p className="-mt-1 mb-5 max-w-3xl text-sm leading-6 text-[var(--color-muted)] md:text-base">
                             This 15-min call is required to map out your project and activate your application.
                           </p>
                           <div className="overflow-hidden rounded-lg border border-white/15 bg-white">
@@ -663,12 +663,12 @@ export function Contact() {
               </div>
 
               {!submitted && (
-                <div className={`mt-10 grid gap-4 ${step > 1 ? 'md:grid-cols-[0.72fr_1.43fr]' : ''}`}>
+                <div className={`mt-7 grid gap-3 ${step > 1 ? 'md:grid-cols-[0.72fr_1.43fr]' : ''}`}>
                   {step > 1 && (
                     <button
                       type="button"
                       onClick={handleBack}
-                      className="flex min-h-[60px] items-center justify-center gap-3 rounded-lg border border-white/12 bg-white/[0.025] text-sm font-medium text-[var(--color-muted)] transition-colors hover:border-white/28 hover:text-white md:min-h-[68px] md:text-base"
+                      className="flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-white/12 bg-white/[0.025] text-sm font-medium text-[var(--color-muted)] transition-colors hover:border-white/28 hover:text-white md:min-h-[48px]"
                     >
                       <ArrowLeftIcon />
                       Back
@@ -678,7 +678,7 @@ export function Contact() {
                     type="button"
                     onClick={isLastStep ? () => void handleSubmit() : handleContinue}
                     disabled={isLastStep ? !canSubmit : false}
-                    className="flex min-h-[60px] items-center justify-center gap-3 rounded-lg bg-[var(--color-text-primary)] text-sm font-semibold text-[var(--color-bg)] transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:pointer-events-none disabled:bg-white/12 disabled:text-[var(--color-muted)] md:min-h-[68px] md:text-base"
+                    className="flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-[var(--color-text-primary)] text-sm font-semibold text-[var(--color-bg)] transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:pointer-events-none disabled:bg-white/12 disabled:text-[var(--color-muted)] md:min-h-[48px]"
                   >
                     {isLastStep ? (submitting ? 'Submitting...' : 'Submit') : 'Continue'}
                     {isLastStep ? <CheckIcon /> : <ArrowRightIcon />}
@@ -697,7 +697,7 @@ export function Contact() {
 
 function QuestionTitle({ children }: { children: ReactNode }) {
   return (
-    <h2 className="mb-5 font-display text-[2.65rem] leading-[0.95] text-white sm:text-5xl md:text-[4rem] lg:text-[4.6rem]">
+    <h2 className="mb-5 font-display text-[1.875rem] leading-[1.04] text-white sm:text-[2rem] md:text-[2rem] lg:text-[2.25rem]">
       {children} <span className="italic" style={{ color: accent }}>*</span>
     </h2>
   );
