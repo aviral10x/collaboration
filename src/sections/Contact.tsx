@@ -796,32 +796,10 @@ export function Contact() {
                               className="min-h-[620px] w-full bg-white md:min-h-[680px]"
                             />
                           </div>
-                          <div className="mt-6 flex flex-col gap-4 rounded-lg border border-white/12 bg-white/[0.04] px-5 py-4 text-sm text-[var(--color-muted)] md:flex-row md:items-center md:justify-between md:text-base">
+                          <div className="mt-6 rounded-lg border border-white/12 bg-white/[0.04] px-5 py-4 text-sm text-[var(--color-muted)] md:text-base">
                             <div className="flex items-center gap-3">
                               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: bookedCall ? accentStrong : accent }} />
                               {submitting ? 'Booking confirmed. Sending your application...' : bookedCall ? 'Booking confirmed.' : 'Waiting for booking confirmation...'}
-                            </div>
-                            <div className="flex flex-wrap items-center gap-3">
-                              <a
-                                href={calendlyBaseUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="rounded-full border border-white/12 px-4 py-2 text-xs font-medium text-[var(--color-text-primary)] transition-colors hover:border-white/35 md:text-sm"
-                              >
-                                Open Calendly
-                              </a>
-                              {!bookedCall && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setBookedCall(true);
-                                    void submitApplication(true);
-                                  }}
-                                  className="rounded-full border border-white/12 px-4 py-2 text-xs font-medium text-[var(--color-text-primary)] transition-colors hover:border-white/35 md:text-sm"
-                                >
-                                  I booked it
-                                </button>
-                              )}
                             </div>
                           </div>
                         </div>
