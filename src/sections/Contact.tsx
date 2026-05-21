@@ -1,176 +1,275 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import gsap from 'gsap';
+import { useEffect, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useHlsVideo } from '../hooks/useHlsVideo';
-import { useSmoothScroll } from '../hooks/useSmoothScroll';
+
+type ContactMethod = 'Telegram' | 'WhatsApp';
 
 type FormState = {
   name: string;
   email: string;
-  company: string;
-  projectType: string;
+  website: string;
+  contactMethod: ContactMethod;
+  contactHandle: string;
   goal: string;
-  timeline: string;
+  projectDetails: string;
   budget: string;
-  references: string;
-  details: string;
+  timeline: string;
 };
-
-type FormKey = keyof FormState;
 
 const initialForm: FormState = {
   name: '',
   email: '',
-  company: '',
-  projectType: '',
+  website: '',
+  contactMethod: 'Telegram',
+  contactHandle: '',
   goal: '',
-  timeline: '',
+  projectDetails: '',
   budget: '',
-  references: '',
-  details: '',
+  timeline: '',
 };
 
-const questions: Array<{
-  key: FormKey;
-  label: string;
-  placeholder?: string;
-  required?: boolean;
-  type?: 'text' | 'email' | 'textarea' | 'choices';
-  options?: string[];
-}> = [
-  { key: 'name', label: "What's your name? *", placeholder: 'Your name', required: true },
-  { key: 'email', label: "What's your email? *", placeholder: 'you@studio.com', required: true, type: 'email' },
-  { key: 'company', label: "What's your team or project?", placeholder: 'Studio, team, or project name' },
-  {
-    key: 'projectType',
-    label: 'What do you need made?',
-    type: 'choices',
-    options: ['Product commercial', 'Fashion film', 'Beauty campaign', 'Automotive spot', 'Social content', 'Launch reel'],
-  },
-  { key: 'goal', label: "What's the main goal?", placeholder: 'Launch, sell, explain, pitch, grow, or build awareness', type: 'textarea' },
-  {
-    key: 'timeline',
-    label: 'When do you need it?',
-    type: 'choices',
-    options: ['This week', '2-3 weeks', 'This month', 'Flexible'],
-  },
-  {
-    key: 'budget',
-    label: "What's the budget range?",
-    type: 'choices',
-    options: ['$1k-$3k', '$3k-$7k', '$7k-$15k', '$15k+'],
-  },
-  { key: 'references', label: 'Any references we should see?', placeholder: 'Links, moods, videos, or visual direction', type: 'textarea' },
-  { key: 'details', label: 'Anything else we should know?', placeholder: 'Give us the spark, the constraints, and the feeling.', type: 'textarea' },
+const totalSteps = 9;
+const calendlyUrl = 'https://calendly.com/neuralstudios9/30min?hide_gdpr_banner=1&background_color=ffffff&text_color=21364f&primary_color=7b2cbf';
+
+const needsOptions = [
+  'Explain my product or service',
+  'Grow on social media',
+  'Launch a product',
+  'Run ads that convert',
+  'Design a website',
+  'Something else',
 ];
 
-function InstagramIcon() {
+const budgetOptions = ['$1,500 - $3,000', '$3,000 - $5,000', '$5,000 - $10,000', '$10,000+'];
+const timelineOptions = ['ASAP (this week)', 'This month', 'Within 30 days'];
+
+function UserIcon({ className = '' }: { className?: string }) {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="2" width="20" height="20" rx="5" />
-      <circle cx="12" cy="12" r="5" />
-      <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+    <svg className={className} width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M20 21a8 8 0 0 0-16 0" />
+      <circle cx="12" cy="7" r="4" />
     </svg>
   );
 }
 
-function XIcon() {
+function MailIcon({ className = '' }: { className?: string }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    <svg className={className} width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3 7 9 6 9-6" />
     </svg>
   );
 }
 
-function MailIcon() {
+function LinkIcon({ className = '' }: { className?: string }) {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <polyline points="22,7 12,13 2,7" />
+    <svg className={className} width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M10 13a5 5 0 0 0 7.07 0l2.12-2.12a5 5 0 0 0-7.07-7.07L10.9 5.03" />
+      <path d="M14 11a5 5 0 0 0-7.07 0L4.81 13.12a5 5 0 0 0 7.07 7.07l1.22-1.22" />
     </svg>
   );
 }
 
-const socials = [
-  { name: 'Instagram', url: 'https://www.instagram.com/aurakidzzz/', icon: InstagramIcon },
-  { name: 'X', url: 'https://x.com/aviral10x', icon: XIcon },
-  { name: 'Email', url: 'mailto:aviral10x@gmail.com', icon: MailIcon },
-];
+function ChatIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg className={className} width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7A8.4 8.4 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.5 8.5 0 0 1 21 11.5Z" />
+    </svg>
+  );
+}
 
-const exploreLinks = [
-  { label: 'Home', target: 'hero' },
-  { label: 'Work', target: 'work' },
-  { label: 'Services', target: 'journal' },
-  { label: 'Contact', target: 'contact' },
-];
+function PhoneIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg className={className} width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.11 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.72c.12.96.33 1.9.63 2.8a2 2 0 0 1-.45 2.11L8 9.91a16 16 0 0 0 6.09 6.09l1.27-1.27a2 2 0 0 1 2.11-.45c.9.3 1.84.51 2.8.63A2 2 0 0 1 22 16.92Z" />
+    </svg>
+  );
+}
 
-const marqueeItems = Array.from({ length: 6 });
+function CheckIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="m5 12 4 4L19 6" />
+    </svg>
+  );
+}
+
+function ArrowRightIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  );
+}
+
+function ArrowLeftIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+  );
+}
+
+function FieldShell({
+  children,
+  accent = '#b05cff',
+  active = false,
+}: {
+  children: ReactNode;
+  accent?: string;
+  active?: boolean;
+}) {
+  return (
+    <div
+      className="flex min-h-[100px] items-center gap-7 rounded-2xl border bg-black/22 px-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] transition-colors duration-300 md:min-h-[104px] md:px-9"
+      style={{
+        borderColor: active ? accent : 'rgba(255,255,255,0.11)',
+        boxShadow: active
+          ? `0 0 0 1px ${accent}, 0 0 36px ${accent}24, inset 0 1px 0 rgba(255,255,255,0.05)`
+          : 'inset 0 1px 0 rgba(255,255,255,0.04)',
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function OptionButton({
+  selected,
+  children,
+  onClick,
+  accent = '#b05cff',
+}: {
+  selected: boolean;
+  children: ReactNode;
+  onClick: () => void;
+  accent?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex min-h-[92px] w-full items-center gap-7 rounded-2xl border bg-black/22 px-8 text-left text-2xl font-semibold text-white/64 transition-all duration-300 hover:border-white/28 hover:text-white md:text-3xl"
+      style={{
+        borderColor: selected ? accent : 'rgba(255,255,255,0.11)',
+        background: selected ? `${accent}1f` : 'rgba(0,0,0,0.22)',
+        color: selected ? '#fff' : undefined,
+        boxShadow: selected ? `0 0 0 1px ${accent}, 0 0 34px ${accent}1f` : undefined,
+      }}
+    >
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center" style={{ color: selected ? accent : 'transparent' }}>
+        {selected && <CheckIcon />}
+      </span>
+      {children}
+    </button>
+  );
+}
 
 export function Contact() {
   const { videoRef } = useHlsVideo('https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8');
-  const marqueeRef = useRef<HTMLDivElement>(null);
-  const { scrollToSection } = useSmoothScroll();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(initialForm);
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [bookedCall, setBookedCall] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const currentQuestion = questions[step];
-  const progress = Math.round(((step + 1) / questions.length) * 100);
-  const isFinalStep = step === questions.length - 1;
+  const progress = Math.round((step / totalSteps) * 100);
+  const isLastStep = step === totalSteps;
+  const canSubmit = bookedCall && !submitting;
 
   useEffect(() => {
-    if (!marqueeRef.current) return;
-
-    const tween = gsap.to(marqueeRef.current, {
-      xPercent: -50,
-      duration: 42,
-      ease: 'none',
-      repeat: -1,
-    });
-
-    return () => {
-      tween.kill();
+    const handleCalendlyMessage = (event: MessageEvent) => {
+      const data = event.data as { event?: string } | undefined;
+      if (data?.event === 'calendly.event_scheduled') {
+        setBookedCall(true);
+      }
     };
+
+    window.addEventListener('message', handleCalendlyMessage);
+    return () => window.removeEventListener('message', handleCalendlyMessage);
   }, []);
 
-  function update(field: FormKey, value: string) {
-    setForm((prev) => ({ ...prev, [field]: value }));
+  function update<Key extends keyof FormState>(key: Key, value: FormState[Key]) {
+    setForm((prev) => ({ ...prev, [key]: value }));
     setError('');
   }
 
-  function validateCurrentStep() {
-    const value = form[currentQuestion.key].trim();
-    if (currentQuestion.required && !value) {
-      setError('Please answer this before continuing.');
+  function isValidUrl(value: string) {
+    try {
+      const url = new URL(value);
+      return Boolean(url.hostname.includes('.'));
+    } catch {
       return false;
     }
-    if (currentQuestion.type === 'email' && value && !/^\S+@\S+\.\S+$/.test(value)) {
-      setError('Please enter a valid email.');
+  }
+
+  function validateStep() {
+    if (step === 1 && !form.name.trim()) {
+      setError('Please enter your name.');
+      return false;
+    }
+    if (step === 2 && !/^\S+@\S+\.\S+$/.test(form.email.trim())) {
+      setError('Please enter a valid email address.');
+      return false;
+    }
+    if (step === 3 && !isValidUrl(form.website.trim())) {
+      setError('Please enter a URL.');
+      return false;
+    }
+    if (step === 4 && !form.contactHandle.trim()) {
+      setError(form.contactMethod === 'Telegram' ? 'Please enter your Telegram username.' : 'Please enter your WhatsApp number.');
+      return false;
+    }
+    if (step === 5 && !form.goal) {
+      setError('Please select one option.');
+      return false;
+    }
+    if (step === 6 && form.projectDetails.trim().length < 50) {
+      setError('Please provide at least 50 characters');
+      return false;
+    }
+    if (step === 7 && !form.budget) {
+      setError('Please select one option.');
+      return false;
+    }
+    if (step === 8 && !form.timeline) {
+      setError('Please select one option.');
       return false;
     }
     return true;
   }
 
-  async function submitInquiry() {
+  function handleContinue() {
+    if (!validateStep()) return;
+    setStep((prev) => Math.min(totalSteps, prev + 1));
+  }
+
+  function handleBack() {
+    setError('');
+    setStep((prev) => Math.max(1, prev - 1));
+  }
+
+  async function handleSubmit() {
+    if (!canSubmit) return;
     setSubmitting(true);
     setError('');
 
     try {
       const formData = new FormData();
       formData.append('access_key', '5ef59b49-97e2-4d47-b503-5197e223d81a');
-      formData.append('subject', `Neural Studios Inquiry ${form.projectType || 'General'}`);
+      formData.append('subject', `Neural Studios Application - ${form.name}`);
       formData.append('from_name', 'Neural Studios Website');
       formData.append('name', form.name);
       formData.append('email', form.email);
-      formData.append('company', form.company || 'Not specified');
-      formData.append('project_type', form.projectType || 'Not specified');
-      formData.append('goal', form.goal || 'Not specified');
-      formData.append('timeline', form.timeline || 'Not specified');
-      formData.append('budget', form.budget || 'Not specified');
-      formData.append('references', form.references || 'Not specified');
-      formData.append('message', form.details || 'No extra details');
+      formData.append('project_website_or_social_link', form.website);
+      formData.append('preferred_contact_method', form.contactMethod);
+      formData.append('contact_handle', form.contactHandle);
+      formData.append('looking_for', form.goal);
+      formData.append('project_details', form.projectDetails);
+      formData.append('monthly_budget', form.budget);
+      formData.append('ideal_timeline', form.timeline);
+      formData.append('calendly_call_booked', bookedCall ? 'Yes' : 'No');
 
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -191,31 +290,15 @@ export function Contact() {
     }
   }
 
-  async function handleContinue() {
-    if (!validateCurrentStep()) return;
-
-    if (isFinalStep) {
-      await submitInquiry();
-      return;
+  function handleEnter(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleContinue();
     }
-
-    setStep((prev) => prev + 1);
-  }
-
-  function handleBack() {
-    setError('');
-    setStep((prev) => Math.max(0, prev - 1));
-  }
-
-  function resetForm() {
-    setForm(initialForm);
-    setSubmitted(false);
-    setStep(0);
-    setError('');
   }
 
   return (
-    <section id="contact" className="relative min-h-[100dvh] overflow-hidden bg-[var(--color-bg)] px-6 py-10 md:px-10 md:py-12">
+    <section id="contact" className="relative min-h-[100dvh] overflow-hidden bg-[var(--color-bg)] px-3 py-6 md:px-8 md:py-10">
       <div className="absolute inset-0 z-0 bg-[var(--color-bg)]">
         <video
           ref={videoRef}
@@ -223,217 +306,288 @@ export function Contact() {
           muted
           loop
           playsInline
-          className="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 scale-y-[-1] object-cover opacity-35"
+          className="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 scale-y-[-1] object-cover opacity-25"
         />
-        <div className="absolute inset-0 bg-black/75 backdrop-blur-[2px]" />
-        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[var(--color-bg)] to-transparent" />
+        <div className="absolute inset-0 bg-black/76 backdrop-blur-[3px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(151,66,255,0.16),transparent_42%)]" />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-[1440px] flex-col justify-between">
-        <div className="contact-marquee relative left-1/2 w-screen -translate-x-1/2 overflow-hidden whitespace-nowrap pb-6">
-          <div ref={marqueeRef} className="contact-marquee-track flex w-max">
-            {[0, 1].map((group) => (
-              <div key={group} className="flex shrink-0">
-                {marqueeItems.map((_, i) => (
-                  <span
-                    key={`${group}-${i}`}
-                    className="mr-10 font-display text-[clamp(5rem,11vw,10rem)] leading-none text-[var(--color-text-primary)]/12"
-                  >
-                    NEURAL STUDIOS *
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-120px' }}
-            transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-            className="w-full"
-          >
-            <h2 className="mb-4 font-display text-5xl leading-none text-[var(--color-text-primary)] md:text-6xl">
-              Let's bring your vision to life
-            </h2>
-            <p className="mx-auto mb-7 max-w-xl text-sm leading-7 text-[var(--color-muted)] md:text-base">
-              Answer a few quick questions and we'll get back to you within 24 hours.
-            </p>
-
-            <div className="mx-auto mb-6 max-w-xl">
-              <div className="mb-3 flex items-center justify-between text-xs uppercase text-[var(--color-muted)]">
-                <span>Step {step + 1} of {questions.length}</span>
+      <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-3rem)] w-full max-w-[1320px] items-center justify-center">
+        <div className="relative w-full overflow-hidden rounded-[28px] border border-white/10 bg-[#111016]/70 px-5 py-8 shadow-[0_30px_120px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl md:px-12 md:py-12 lg:px-16">
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0)_35%,rgba(178,79,255,0.05))]" />
+          <div className="relative mx-auto flex min-h-[650px] w-full max-w-[900px] flex-col">
+            <div className="mb-14 md:mb-20">
+              <div className="mb-6 flex items-center justify-between text-sm font-bold uppercase tracking-[0.09em] text-[#a8adbd] md:text-2xl md:tracking-[0.08em]">
+                <span>STEP {step} OF {totalSteps}</span>
                 <span>{progress}%</span>
               </div>
-              <div className="h-px w-full overflow-hidden bg-white/15">
+              <div className="h-3 w-full overflow-hidden rounded-full bg-white/7">
                 <motion.div
-                  className="h-full bg-[var(--color-text-primary)]"
+                  className="h-full rounded-full bg-[#c147ff]"
                   initial={false}
                   animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                  transition={{ duration: 0.42, ease: [0.25, 0.1, 0.25, 1] }}
                 />
               </div>
             </div>
 
-            <AnimatePresence mode="wait">
-              {submitted ? (
-                <motion.div
-                  key="submitted"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.45 }}
-                  className="mx-auto max-w-xl py-8"
-                >
-                  <h3 className="mb-4 font-display text-5xl text-[var(--color-text-primary)]">
-                    Message sent
-                  </h3>
-                  <p className="mb-8 text-sm leading-7 text-[var(--color-muted)] md:text-base">
-                    We received your inquiry and will get back to you within 24 hours.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={resetForm}
-                    className="rounded-full border border-white/20 px-7 py-3 text-sm text-[var(--color-text-primary)] transition-colors hover:bg-white hover:text-[var(--color-bg)]"
+            <div className="flex flex-1 flex-col">
+              <AnimatePresence mode="wait">
+                {submitted ? (
+                  <motion.div
+                    key="submitted"
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -24 }}
+                    transition={{ duration: 0.35 }}
+                    className="flex flex-1 flex-col justify-center"
                   >
-                    Start another
-                  </button>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key={currentQuestion.key}
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -18 }}
-                  transition={{ duration: 0.35 }}
-                  className="mx-auto w-full max-w-xl"
-                >
-                  <h3 className="mb-5 text-3xl leading-tight text-[var(--color-text-primary)] md:text-4xl">
-                    {currentQuestion.label}
-                  </h3>
-
-                  {currentQuestion.type === 'choices' ? (
-                    <div className="mb-6 flex flex-wrap justify-center gap-3">
-                      {currentQuestion.options?.map((option) => (
-                        <button
-                          key={option}
-                          type="button"
-                          onClick={() => update(currentQuestion.key, form[currentQuestion.key] === option ? '' : option)}
-                          className={`rounded-full border px-5 py-3 text-sm transition-all duration-300 ${
-                            form[currentQuestion.key] === option
-                              ? 'border-white bg-white text-[var(--color-bg)]'
-                              : 'border-white/15 bg-white/5 text-[var(--color-muted)] hover:border-white/40 hover:text-white'
-                          }`}
-                        >
-                          {option}
-                        </button>
-                      ))}
-                    </div>
-                  ) : currentQuestion.type === 'textarea' ? (
-                    <textarea
-                      value={form[currentQuestion.key]}
-                      onChange={(event) => update(currentQuestion.key, event.target.value)}
-                      rows={4}
-                      placeholder={currentQuestion.placeholder}
-                      className="mb-6 w-full resize-none border-0 border-b border-white/20 bg-transparent px-0 py-3 text-center text-xl text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-muted)]/50 focus:border-white md:text-2xl"
-                    />
-                  ) : (
-                    <input
-                      type={currentQuestion.type || 'text'}
-                      value={form[currentQuestion.key]}
-                      onChange={(event) => update(currentQuestion.key, event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                          event.preventDefault();
-                          void handleContinue();
-                        }
-                      }}
-                      placeholder={currentQuestion.placeholder}
-                      className="mb-6 w-full border-0 border-b border-white/20 bg-transparent px-0 py-3 text-center text-2xl text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-muted)]/50 focus:border-white md:text-3xl"
-                    />
-                  )}
-
-                  {error && <p className="mb-5 text-sm text-red-300">{error}</p>}
-
-                  <div className="flex items-center justify-center gap-3">
-                    {step > 0 && (
-                      <button
-                        type="button"
-                        onClick={handleBack}
-                        className="rounded-full border border-white/15 px-6 py-3 text-sm text-[var(--color-muted)] transition-colors hover:border-white/40 hover:text-white"
-                      >
-                        Back
-                      </button>
+                    <h2 className="mb-5 text-5xl font-bold leading-[1.05] tracking-[-0.04em] text-white md:text-7xl">
+                      Application submitted <span className="text-[#b45cff]">*</span>
+                    </h2>
+                    <p className="max-w-2xl text-2xl leading-relaxed text-[#a8adbd]">
+                      We received your details and your scheduled call. See you soon.
+                    </p>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={step}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.32 }}
+                    className="flex flex-1 flex-col"
+                  >
+                    {step === 1 && (
+                      <div>
+                        <QuestionTitle>What's your name?</QuestionTitle>
+                        <FieldShell>
+                          <UserIcon className="shrink-0 text-[#8c92a5]" />
+                          <input
+                            value={form.name}
+                            onChange={(event) => update('name', event.target.value)}
+                            onKeyDown={handleEnter}
+                            autoComplete="name"
+                            autoFocus
+                            className="w-full bg-transparent text-3xl text-white outline-none placeholder:text-[#8c92a5] md:text-4xl"
+                          />
+                        </FieldShell>
+                      </div>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => void handleContinue()}
-                      disabled={submitting}
-                      className="rounded-full bg-white px-8 py-3.5 text-sm font-medium text-[var(--color-bg)] transition-transform duration-300 hover:scale-[1.04] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60"
-                    >
-                      {submitting ? 'Sending...' : isFinalStep ? 'Send inquiry' : 'Continue'}
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        </div>
 
-        <footer className="mt-10 grid gap-8 border-t border-white/10 pt-6 md:grid-cols-[1fr_1.4fr_1fr] md:items-start">
-          <div>
-            <h3 className="mb-4 text-sm text-[var(--color-text-primary)]">Follow Us</h3>
-            <div className="flex items-center gap-2">
-              {socials.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.url}
-                  target={social.url.startsWith('mailto') ? undefined : '_blank'}
-                  rel="noopener noreferrer"
-                  aria-label={social.name}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-[var(--color-muted)] transition-colors hover:border-white/40 hover:text-white"
-                >
-                  <social.icon />
-                </a>
-              ))}
+                    {step === 2 && (
+                      <div>
+                        <QuestionTitle>What's your best email address?</QuestionTitle>
+                        <FieldShell active>
+                          <MailIcon className="shrink-0 text-[#b45cff]" />
+                          <input
+                            type="email"
+                            value={form.email}
+                            onChange={(event) => update('email', event.target.value)}
+                            onKeyDown={handleEnter}
+                            autoComplete="email"
+                            autoFocus
+                            className="w-full bg-transparent text-3xl text-white outline-none placeholder:text-[#8c92a5] md:text-4xl"
+                          />
+                        </FieldShell>
+                      </div>
+                    )}
+
+                    {step === 3 && (
+                      <div>
+                        <QuestionTitle>Project website or social link</QuestionTitle>
+                        <FieldShell active>
+                          <LinkIcon className="shrink-0 text-[#b45cff]" />
+                          <input
+                            type="url"
+                            value={form.website}
+                            onChange={(event) => update('website', event.target.value)}
+                            onKeyDown={handleEnter}
+                            placeholder="https://"
+                            autoFocus
+                            className="w-full bg-transparent text-3xl text-white outline-none placeholder:text-[#8c92a5] md:text-4xl"
+                          />
+                        </FieldShell>
+                      </div>
+                    )}
+
+                    {step === 4 && (
+                      <div>
+                        <QuestionTitle>How can we reach you?</QuestionTitle>
+                        <div className="mb-12 grid gap-6 md:grid-cols-2">
+                          {(['Telegram', 'WhatsApp'] as ContactMethod[]).map((method) => {
+                            const isSelected = form.contactMethod === method;
+                            const accent = method === 'Telegram' ? '#00a9f4' : '#25d366';
+                            const Icon = method === 'Telegram' ? ChatIcon : PhoneIcon;
+                            return (
+                              <button
+                                key={method}
+                                type="button"
+                                onClick={() => {
+                                  update('contactMethod', method);
+                                  update('contactHandle', '');
+                                }}
+                                className="flex min-h-[186px] flex-col items-center justify-center gap-5 rounded-2xl border bg-black/22 text-3xl font-semibold text-[#9aa0b2] transition-all duration-300 hover:border-white/25"
+                                style={{
+                                  borderColor: isSelected ? accent : 'rgba(255,255,255,0.12)',
+                                  background: isSelected ? `${accent}16` : 'rgba(0,0,0,0.22)',
+                                  color: isSelected ? accent : undefined,
+                                  boxShadow: isSelected ? `0 0 0 1px ${accent}, 0 0 36px ${accent}1f` : undefined,
+                                }}
+                              >
+                                <Icon />
+                                {method}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <FieldShell active accent={form.contactMethod === 'Telegram' ? '#00a9f4' : '#25d366'}>
+                          {form.contactMethod === 'Telegram' ? (
+                            <ChatIcon className="shrink-0 text-[#00a9f4]" />
+                          ) : (
+                            <PhoneIcon className="shrink-0 text-[#25d366]" />
+                          )}
+                          <input
+                            value={form.contactHandle}
+                            onChange={(event) => update('contactHandle', event.target.value)}
+                            onKeyDown={handleEnter}
+                            placeholder={form.contactMethod === 'Telegram' ? '@yo' : '+1 234 567 8900'}
+                            autoFocus
+                            className="w-full bg-transparent text-3xl text-white outline-none placeholder:text-[#8c92a5] md:text-4xl"
+                          />
+                        </FieldShell>
+                      </div>
+                    )}
+
+                    {step === 5 && (
+                      <div>
+                        <QuestionTitle>What are you looking for?</QuestionTitle>
+                        <div className="space-y-4">
+                          {needsOptions.map((option) => (
+                            <OptionButton
+                              key={option}
+                              selected={form.goal === option}
+                              onClick={() => update('goal', option)}
+                            >
+                              {option}
+                            </OptionButton>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {step === 6 && (
+                      <div>
+                        <QuestionTitle>Tell us about your project</QuestionTitle>
+                        <p className="-mt-2 mb-12 text-2xl leading-relaxed text-[#a8adbd] md:text-3xl">
+                          What are you building and why do you need video content?
+                        </p>
+                        <textarea
+                          value={form.projectDetails}
+                          onChange={(event) => update('projectDetails', event.target.value)}
+                          autoFocus
+                          className="min-h-[282px] w-full resize-none rounded-2xl border border-[#d331ff] bg-black/22 p-9 text-3xl leading-relaxed text-white outline-none shadow-[0_0_0_1px_#d331ff,0_0_34px_rgba(211,49,255,0.16)] placeholder:text-[#8c92a5]"
+                        />
+                      </div>
+                    )}
+
+                    {step === 7 && (
+                      <div>
+                        <QuestionTitle>What's your monthly budget?</QuestionTitle>
+                        <div className="space-y-4">
+                          {budgetOptions.map((option) => (
+                            <OptionButton
+                              key={option}
+                              selected={form.budget === option}
+                              onClick={() => update('budget', option)}
+                            >
+                              {option}
+                            </OptionButton>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {step === 8 && (
+                      <div>
+                        <QuestionTitle>Ideal timeline to start?</QuestionTitle>
+                        <div className="space-y-4">
+                          {timelineOptions.map((option) => (
+                            <OptionButton
+                              key={option}
+                              selected={form.timeline === option}
+                              onClick={() => update('timeline', option)}
+                            >
+                              {option}
+                            </OptionButton>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {step === 9 && (
+                      <div>
+                        <QuestionTitle>Book your discovery call</QuestionTitle>
+                        <p className="-mt-2 mb-12 max-w-3xl text-2xl leading-relaxed text-[#a8adbd] md:text-3xl">
+                          This 15-min call is required to map out your project and activate your application.
+                        </p>
+                        <div className="overflow-hidden rounded-2xl border border-white/18 bg-white">
+                          <iframe
+                            src={calendlyUrl}
+                            title="Book your discovery call"
+                            className="h-[760px] w-full bg-white"
+                          />
+                        </div>
+                        <div className="mt-12 flex min-h-[82px] items-center gap-5 rounded-2xl border border-[#8c3bd1]/60 bg-[#b45cff]/12 px-7 text-2xl text-[#c07cff]">
+                          <span className="h-3 w-3 rounded-full bg-[#a855f7]" />
+                          {bookedCall ? 'Booking confirmed.' : 'Waiting for booking confirmation...'}
+                        </div>
+                      </div>
+                    )}
+
+                    {error && (
+                      <p className="mt-8 text-2xl text-[#ff6565]">
+                        {error}
+                      </p>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
 
-          <div className="md:text-center">
-            <h3 className="mb-4 text-sm text-[var(--color-text-primary)]">Explore</h3>
-            <div className="flex flex-wrap gap-x-5 gap-y-2 md:justify-center">
-              {exploreLinks.map((link) => (
+            {!submitted && (
+              <div className="mt-16 grid gap-6 md:grid-cols-[0.72fr_1.43fr]">
                 <button
-                  key={link.label}
                   type="button"
-                  onClick={() => scrollToSection(link.target)}
-                  className="text-sm text-[var(--color-muted)] transition-colors hover:text-white"
+                  onClick={handleBack}
+                  disabled={step === 1}
+                  className="flex min-h-[90px] items-center justify-center gap-5 rounded-2xl border border-white/12 bg-black/18 text-2xl font-semibold text-[#a8adbd] transition-colors hover:border-white/28 hover:text-white disabled:pointer-events-none disabled:opacity-0"
                 >
-                  {link.label}
+                  <ArrowLeftIcon />
+                  Back
                 </button>
-              ))}
-            </div>
+                <button
+                  type="button"
+                  onClick={isLastStep ? () => void handleSubmit() : handleContinue}
+                  disabled={isLastStep ? !canSubmit : false}
+                  className="flex min-h-[90px] items-center justify-center gap-5 rounded-2xl bg-white text-2xl font-bold text-black transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:pointer-events-none disabled:bg-[#7a2d98] disabled:text-white/45"
+                >
+                  {isLastStep ? (submitting ? 'Submitting...' : 'Submit') : 'Continue'}
+                  {isLastStep ? <CheckIcon /> : <ArrowRightIcon />}
+                </button>
+              </div>
+            )}
           </div>
-
-          <div className="md:text-right">
-            <h3 className="mb-4 text-sm text-[var(--color-text-primary)]">Let's work together</h3>
-            <a href="mailto:aviral10x@gmail.com" className="text-sm text-[var(--color-muted)] transition-colors hover:text-white">
-              Have an idea?
-            </a>
-          </div>
-
-          <div className="text-xs text-[var(--color-muted)] md:col-span-2">
-            © {new Date().getFullYear()} Neural Studios. All rights reserved.
-          </div>
-          <div className="flex gap-5 text-xs text-[var(--color-muted)] md:justify-end">
-            <a href="mailto:aviral10x@gmail.com" className="transition-colors hover:text-white">Legal</a>
-            <a href="mailto:aviral10x@gmail.com" className="transition-colors hover:text-white">Privacy Policy</a>
-            <button type="button" className="transition-colors hover:text-white">Cookie Settings</button>
-          </div>
-        </footer>
+        </div>
       </div>
     </section>
+  );
+}
+
+function QuestionTitle({ children }: { children: ReactNode }) {
+  return (
+    <h2 className="mb-6 text-[clamp(3rem,5vw,4.5rem)] font-bold leading-[1.06] text-white">
+      {children} <span className="inline-block text-[#b45cff]">*</span>
+    </h2>
   );
 }
