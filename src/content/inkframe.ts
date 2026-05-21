@@ -233,7 +233,7 @@ export const auraHighlights = [
   'Audience clustered around ages 25-44, with strongest concentration in Brazil, Turkey, Japan, India, and Argentina',
 ];
 
-export const contactEmail = 'aviral10x@gmail.com';
+export const contactEmail = 'neuralstudios9@gmail.com';
 
 export const enquiryGroups = [
   'Fashion, beauty, skincare, and cosmetics teams planning launch films or campaign assets',

@@ -287,7 +287,7 @@ function OptionButton({
 const socials = [
   { name: 'Instagram', url: 'https://www.instagram.com/aurakidzzz/', icon: InstagramIcon },
   { name: 'X', url: 'https://x.com/aviral10x', icon: XIcon },
-  { name: 'Email', url: 'mailto:aviral10x@gmail.com', icon: MailIconSmall },
+  { name: 'Email', url: 'mailto:neuralstudios9@gmail.com', icon: MailIconSmall },
 ];
 
 export function Contact() {
@@ -898,7 +898,7 @@ function SiteFooter({ scrollToSection }: { scrollToSection: (target: string) => 
 
       <div className="md:text-right">
         <h3 className="mb-4 text-sm text-[var(--color-text-primary)]">Let's work together</h3>
-        <a href="mailto:aviral10x@gmail.com" className="text-sm text-[var(--color-muted)] transition-colors hover:text-white">
+        <a href="mailto:neuralstudios9@gmail.com" className="text-sm text-[var(--color-muted)] transition-colors hover:text-white">
           Have an idea?
         </a>
       </div>
@@ -907,8 +907,8 @@ function SiteFooter({ scrollToSection }: { scrollToSection: (target: string) => 
         © {new Date().getFullYear()} Neural Studios. All rights reserved.
       </div>
       <div className="flex gap-5 text-xs text-[var(--color-muted)] md:justify-end">
-        <a href="mailto:aviral10x@gmail.com" className="transition-colors hover:text-white">Legal</a>
-        <a href="mailto:aviral10x@gmail.com" className="transition-colors hover:text-white">Privacy Policy</a>
+        <a href="mailto:neuralstudios9@gmail.com" className="transition-colors hover:text-white">Legal</a>
+        <a href="mailto:neuralstudios9@gmail.com" className="transition-colors hover:text-white">Privacy Policy</a>
         <button type="button" className="transition-colors hover:text-white">Cookie Settings</button>
       </div>
     </footer>

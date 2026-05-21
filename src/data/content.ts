@@ -1,4 +1,4 @@
-export const contactEmail = 'aviral10x@gmail.com';
+export const contactEmail = 'neuralstudios9@gmail.com';
 
 // ─── Mux Integration ─────────────────────────────────────────────────────────
 // muxAssetId  → from Mux Dashboard > Video > Asset ID column
@@ -163,7 +163,7 @@ export const stats = [
 
 export const socialLinks = [
   { name: 'Instagram', url: 'https://www.instagram.com/aurakidzzz/' },
-  { name: 'Email', url: 'mailto:aviral10x@gmail.com' },
+  { name: 'Email', url: 'mailto:neuralstudios9@gmail.com' },
 ];
 
 export const servicePillars = [
