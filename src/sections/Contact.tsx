@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties, type Keyb
 import { AnimatePresence, motion } from 'framer-motion';
 import { useHlsVideo } from '../hooks/useHlsVideo';
 import { useSmoothScroll } from '../hooks/useSmoothScroll';
+import { trackEvent } from '../lib/analytics';
 
 type ContactMethod = 'Telegram' | 'WhatsApp';
 
@@ -349,6 +350,14 @@ export function Contact() {
         return;
       }
 
+      trackEvent('generate_lead', {
+        event_category: 'lead',
+        contact_method: form.contactMethod,
+        project_goal: form.goal,
+        budget: form.budget,
+        timeline: form.timeline,
+        calendly_call_booked: calendarConfirmed,
+      });
       setSubmitted(true);
     } catch {
       setError('Network error. Please check your connection and try again.');
@@ -364,13 +373,19 @@ export function Contact() {
 
       if (event.origin === 'https://calendly.com' && data?.event === 'calendly.event_scheduled') {
         setBookedCall(true);
+        trackEvent('calendly_event_scheduled', {
+          event_category: 'lead',
+          form_step: step,
+          contact_method: form.contactMethod,
+          project_goal: form.goal,
+        });
         void submitApplication(true);
       }
     };
 
     window.addEventListener('message', handleCalendlyMessage);
     return () => window.removeEventListener('message', handleCalendlyMessage);
-  }, [submitApplication]);
+  }, [form.contactMethod, form.goal, step, submitApplication]);
 
   useEffect(() => {
     if (step !== totalSteps || submitted) return;
@@ -487,6 +502,10 @@ export function Contact() {
     if (step === 3) {
       update('website', normalizeUrl(form.website));
     }
+    trackEvent('contact_form_step_completed', {
+      event_category: 'lead',
+      form_step: step,
+    });
     setStep((prev) => Math.min(totalSteps, prev + 1));
   }
 

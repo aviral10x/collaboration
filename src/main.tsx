@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
+import { initAnalytics } from './lib/analytics.ts'
 import './index.css'
 
 if ('scrollRestoration' in window.history) {
@@ -10,6 +11,8 @@ if ('scrollRestoration' in window.history) {
 if (!window.location.hash) {
   window.scrollTo(0, 0)
 }
+
+initAnalytics()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

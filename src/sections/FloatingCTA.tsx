@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSmoothScroll } from '../hooks/useSmoothScroll';
+import { trackEvent } from '../lib/analytics';
 
 /**
  * FloatingCTA
@@ -50,7 +51,14 @@ export function FloatingCTA() {
       {visible && (
         <motion.button
           key="floating-cta"
-          onClick={() => scrollToSection('contact')}
+          onClick={() => {
+            trackEvent('select_content', {
+              event_category: 'engagement',
+              content_type: 'cta',
+              item_id: 'floating_get_in_touch',
+            });
+            scrollToSection('contact');
+          }}
           initial={{ opacity: 0, scale: 0.7, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.7, y: 20 }}

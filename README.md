@@ -9,6 +9,7 @@ Set these Vercel environment variables:
 ```bash
 WEB3FORMS_ACCESS_KEY=your_web3forms_key
 SPREADSHEET_WEBHOOK_URL=your_google_apps_script_or_excel_power_automate_webhook
+VITE_GA_MEASUREMENT_ID=your_google_analytics_measurement_id
 ```
 
 The spreadsheet webhook receives:
