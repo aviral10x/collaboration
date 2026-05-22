@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { Hero } from './sections/Hero';
 import { SelectedWorks } from './sections/SelectedWorks';
 import { Journal } from './sections/Journal';
@@ -24,6 +25,7 @@ function App() {
       </main>
       <FloatingCTA />
       <LoadingScreen />
+      <Analytics />
     </>
   );
 }
